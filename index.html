@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CityGen WFC</title>
+    <script defer type="module" src="index.js"></script>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            overflow: hidden;
+            background-color: black;
+        }
+        header{
+            display: flex;
+            border-bottom: 2px solid #555;
+            cursor: move;
+        }
+        header h1{
+            color: white;
+            padding: 10px;
+            user-select: none;
+            pointer-events: none;
+        }
+        header button{
+            margin-left: auto;
+            background-color: #777;
+            width: 150px;
+            color: white;
+            cursor: pointer;
+        }
+        header button:hover{
+            background-color: #999;
+        }
+        #controller{
+            z-index: 9999;
+            position: absolute;
+            top: 100px;
+            left: 100px;
+            width: 400px;
+            height: fit-content;
+            background-color: #333;
+            display: flex;
+            flex-direction: column;
+            border-radius: 10px;
+            box-shadow: 0 0 20px 10px white;
+        }
+
+        .option{
+            display: flex;
+            font-size: 1.5rem;
+            padding: 10px 10px;
+            border-bottom: 2px solid #555;
+        }
+        
+        #controller label{
+            color: white;
+            width: 30%;
+            height: inherit;
+        }
+
+        #controller input{
+            width: 60%;
+            height: inherit;
+            background-color: #111;
+            color: white;
+        }
+        #controller output{
+            width: 15%;
+            height: inherit;
+            background-color: #111;
+            color: white;
+            text-align: end;
+            padding-right: 10px; 
+        }
+        #controller span{
+            color: white;
+            padding-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div id="controller">
+        <header id="controllerHeader">
+            <h1>WEIGHTS</h1>
+            <button id="generateButton">Generate</button>
+        </header>
+        <div class="option">
+            <label for="emptyTileWeight">empty:</label>
+            <input type="range" value="1" min="0" max="50" oninput="this.nextElementSibling.value = this.value" name="emptyTileWeight" id="emptyTileWeight">
+            <output>1</output><span>x</span>
+        </div>
+        <div class="option">
+            <label for="crossTileWeight">cross:</label>
+            <input type="range" value="1" min="0" max="50" oninput="this.nextElementSibling.value = this.value" name="crossTileWeight" id="crossTileWeight">
+            <output>1</output><span>x</span>
+        </div>
+        <div class="option">
+            <label for="horizontalTileWeight">horizontal:</label>
+            <input type="range" value="1" min="0" max="50" oninput="this.nextElementSibling.value = this.value" name="horizontalTileWeight" id="horizontalTileWeight">
+            <output>1</output><span>x</span>
+        </div>
+        <div class="option">
+            <label for="verticalTileWeight">vertical:</label>
+            <input type="range" value="1" min="0" max="50" oninput="this.nextElementSibling.value = this.value" name="verticalTileWeight" id="verticalTileWeight">
+            <output>1</output><span>x</span>
+        </div>
+        <div class="option">
+            <label for="cornersTileWeight">corners</label>
+            <input type="range" value="1" min="0" max="50" oninput="this.nextElementSibling.value = this.value" name="cornersTileWeight" id="cornersTileWeight">
+            <output>1</output><span>x</span>
+        </div>
+        <div class="option">
+            <label for="tTileWeight">t</label>
+            <input type="range" value="1" min="0" max="50" oninput="this.nextElementSibling.value = this.value" name="tTileWeight" id="tTileWeight">
+            <output>1</output><span>x</span>
+        </div>
+        <div class="option">
+            <label for="gameSpeed">speed</label>
+            <input type="range" value="128" min="16" step="16" max="2048" oninput="this.nextElementSibling.value = this.value" name="gameSpeed" id="gameSpeed">
+            <output>128</output><span>ms</span>
+        </div>
+    </div>
+</body>
+</html>
