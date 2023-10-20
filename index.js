@@ -37,12 +37,12 @@ class WFC {
         this.tiles[10] = new Tile(this.tileImages[10], [ "AAA", "AAA", "BCB", "BCB" ], 1);    // cornerBL
         this.tiles[11] = new Tile(this.tileImages[11], [ "AAA", "BCB", "BCB", "AAA" ], 1);    // cornerBR
 
-        window.addEventListener('click', (evt) => {
+        /* window.addEventListener('click', (evt) => {
           const rect = this.canvas.getBoundingClientRect();
           const x = Math.floor((evt.clientX - rect.left)/this.tileSize)
           const y = Math.floor((evt.clientY - rect.top)/this.tileSize)
           console.log(this.getTileAt(x,y));
-      })
+      }) */
       document.getElementById('generateButton').addEventListener('click', (e) => {
         e.preventDefault()
         this.handleGenerateButton()
