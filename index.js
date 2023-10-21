@@ -24,18 +24,19 @@ class WFC {
             this.tileImages.push(newImg)
         })
         this.tiles = []
-        this.tiles[0] = new Tile(this.tileImages[0], [ "AAA", "AAA", "AAA", "AAA" ], 40);     // empty
-        this.tiles[1] = new Tile(this.tileImages[1], [ "BCB", "BCB", "BCB", "BCB" ], 1);      // cross
-        this.tiles[2] = new Tile(this.tileImages[2], [ "BCB", "AAA", "BCB", "AAA" ], 15);     // vertical
-        this.tiles[3] = new Tile(this.tileImages[3], [ "AAA", "BCB", "AAA", "BCB" ], 15);     // horizontal
-        this.tiles[4] = new Tile(this.tileImages[4], [ "BCB", "BCB", "AAA", "BCB" ], 1);      // topT
-        this.tiles[5] = new Tile(this.tileImages[5], [ "BCB", "BCB", "BCB", "AAA" ], 1);      // rigthT
-        this.tiles[6] = new Tile(this.tileImages[6], [ "AAA", "BCB", "BCB", "BCB" ], 1);      // bottomT
-        this.tiles[7] = new Tile(this.tileImages[7], [ "BCB", "AAA", "BCB", "BCB" ], 1);      // leftT
-        this.tiles[8] = new Tile(this.tileImages[8], [ "BCB", "AAA", "AAA", "BCB" ], 1);      // cornerTL
-        this.tiles[9] = new Tile(this.tileImages[9], [ "BCB", "BCB", "AAA", "AAA" ], 1);      // cornerTR
-        this.tiles[10] = new Tile(this.tileImages[10], [ "AAA", "AAA", "BCB", "BCB" ], 1);    // cornerBL
-        this.tiles[11] = new Tile(this.tileImages[11], [ "AAA", "BCB", "BCB", "AAA" ], 1);    // cornerBR
+
+        this.tiles[0] = new Tile(this.tileImages[0],   [ "eee", "eee", "eee", "eee" ], 1);     // empty
+        this.tiles[1] = new Tile(this.tileImages[1],   [ "brb", "brb", "brb", "brb" ], 1);      // cross
+        this.tiles[2] = new Tile(this.tileImages[2],   [ "brb", "eee", "brb", "eee" ], 1);     // vertical
+        this.tiles[3] = new Tile(this.tileImages[3],   [ "eee", "brb", "eee", "brb" ], 1);     // horizontal
+        this.tiles[4] = new Tile(this.tileImages[4],   [ "brb", "brb", "eee", "brb" ], 1);      // topT
+        this.tiles[5] = new Tile(this.tileImages[5],   [ "brb", "brb", "brb", "eee" ], 1);      // rigthT
+        this.tiles[6] = new Tile(this.tileImages[6],   [ "eee", "brb", "brb", "brb" ], 1);      // bottomT
+        this.tiles[7] = new Tile(this.tileImages[7],   [ "brb", "eee", "brb", "brb" ], 1);      // leftT
+        this.tiles[8] = new Tile(this.tileImages[8],   [ "brb", "eee", "eee", "brb" ], 1);      // cornerTL
+        this.tiles[9] = new Tile(this.tileImages[9],   [ "brb", "brb", "eee", "eee" ], 1);      // cornerTR
+        this.tiles[10] = new Tile(this.tileImages[10], [ "eee", "eee", "brb", "brb" ], 1);    // cornerBL
+        this.tiles[11] = new Tile(this.tileImages[11], [ "eee", "brb", "brb", "eee" ], 1);    // cornerBR
 
         /* window.addEventListener('click', (evt) => {
           const rect = this.canvas.getBoundingClientRect();
