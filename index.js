@@ -17,7 +17,7 @@ class WFC {
         this.ctx.fillRect(0,0,w,h)
 
         this.tileImages = []
-        this.allTiles = ["empty","cross","vertical","horizontal","topT","rightT","bottomT","leftT","cornerTL","cornerTR","cornerBL","cornerBR"]
+        this.allTiles = ["empty","cross","vertical","horizontal","topT","rightT","bottomT","leftT","cornerTL","cornerTR","cornerBL","cornerBR","buildingUp","buildingDown","buildingLeft","buildingRight"]
         this.allTiles.forEach( item => {
             const newImg = new Image()
             newImg.src = `./${item}.jpg`
