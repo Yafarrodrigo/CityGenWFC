@@ -1,8 +1,11 @@
 import Cell from "./Cell.js";
 import Tile from "./Tile.js";
+import tilesConfig from "./tilesConfig.js";
 
 class WFC {
     constructor(w,h){
+
+      this.finished = false
 
       this.defaultSettings = {
         wieghts: {
@@ -37,41 +40,29 @@ class WFC {
       this.canvas.width = w
       this.canvas.height = h
 
-      this.tileSize = 80
+      this.tileSize = 90
+      this.subTileSize = this.tileSize / 3 
+      
       this.tilesPerColumn = Math.floor(h / this.tileSize)
       this.tilesPerRow = Math.floor(w / this.tileSize)
-
+      
+      this.iterations = 0
+      this.maxIterations = (this.tilesPerColumn * this.tilesPerRow)
+      
       this.ctx.fillStyle = "black"
       this.ctx.fillRect(0,0,w,h)
 
-      this.tileImages = []
-      this.allTiles = ["empty","cross","vertical","horizontal","topT","rightT","bottomT","leftT","cornerTL","cornerTR","cornerBL","cornerBR","buildingUp","buildingDown","buildingLeft","buildingRight"]
-      this.allTiles.forEach( item => {
-          const newImg = new Image()
-          newImg.src = `./images/${item}.jpg`
-          this.tileImages.push(newImg)
-      })
       this.tiles = []
+      tilesConfig.forEach( tileInfo => {
+        this.tiles.push( new Tile(tileInfo) )
+      })
 
-      this.tiles[0] = new Tile(this.tileImages[0],   [ "eee", "eee", "eee", "eee" ], 1);     // empty
-      this.tiles[1] = new Tile(this.tileImages[1],   [ "brb", "brb", "brb", "brb" ], 1);      // cross
-      this.tiles[2] = new Tile(this.tileImages[2],   [ "brb", "eee", "brb", "eee" ], 1);     // vertical
-      this.tiles[3] = new Tile(this.tileImages[3],   [ "eee", "brb", "eee", "brb" ], 1);     // horizontal
-      this.tiles[4] = new Tile(this.tileImages[4],   [ "brb", "brb", "eee", "brb" ], 1);      // topT
-      this.tiles[5] = new Tile(this.tileImages[5],   [ "brb", "brb", "brb", "eee" ], 1);      // rigthT
-      this.tiles[6] = new Tile(this.tileImages[6],   [ "eee", "brb", "brb", "brb" ], 1);      // bottomT
-      this.tiles[7] = new Tile(this.tileImages[7],   [ "brb", "eee", "brb", "brb" ], 1);      // leftT
-      this.tiles[8] = new Tile(this.tileImages[8],   [ "brb", "eee", "eee", "brb" ], 1);      // cornerTL
-      this.tiles[9] = new Tile(this.tileImages[9],   [ "brb", "brb", "eee", "eee" ], 1);      // cornerTR
-      this.tiles[10] = new Tile(this.tileImages[10], [ "eee", "eee", "brb", "brb" ], 1);    // cornerBL
-      this.tiles[11] = new Tile(this.tileImages[11], [ "eee", "brb", "brb", "eee" ], 1);    // cornerBR
-
-      /* window.addEventListener('click', (evt) => {
+      window.addEventListener('click', (evt) => {
         const rect = this.canvas.getBoundingClientRect();
-        const x = Math.floor((evt.clientX - rect.left)/this.tileSize)
-        const y = Math.floor((evt.clientY - rect.top)/this.tileSize)
-        console.log(this.getTileAt(x,y));
-    }) */
+        const x = Math.floor((evt.clientX - rect.left)/this.subTileSize)
+        const y = Math.floor((evt.clientY - rect.top)/this.subTileSize)
+        console.log(this.getSubTileAt(x,y));
+    })
     document.getElementById('generateButton').addEventListener('click', (e) => {
       e.preventDefault()
       this.handleGenerateButton()
@@ -92,8 +83,14 @@ class WFC {
       this.speed = this.defaultSettings.speed
 
       this.grid = []
-      this.start()
+      this.subGrid = new Array(this.tilesPerRow*3).fill(null).map( () => new Array(this.tilesPerColumn*3).fill(null))
+      for(let x = 0; x < this.tilesPerRow*3; x++){
+        for(let y = 0; y < this.tilesPerColumn*3; y++){
+          this.subGrid[x][y] = {x,y}
+        }
+      }
 
+      this.start()
       this.draw()
     }
 
@@ -124,11 +121,13 @@ class WFC {
       this.tiles[10].weight = newCornersTileWeight
       this.tiles[11].weight = newCornersTileWeight
 
+      this.iterations = 0
       this.start()
     }
 
     start(){
       this.stop()
+      this.finished = false
       for(let x = 0; x < this.tilesPerRow; x++){
         for(let y = 0; y < this.tilesPerColumn; y++){
             const i = y+x*this.tilesPerColumn
@@ -158,6 +157,9 @@ class WFC {
     getTileAt(x,y){
       return this.grid[y+ x*this.tilesPerColumn]
     }
+    getSubTileAt(x,y){
+      return this.subGrid[x][y]
+    }
 
     checkValid(arr, valid) {
         for (let i = arr.length - 1; i >= 0; i--) {
@@ -178,14 +180,36 @@ class WFC {
       return pool[Math.floor(Math.random()*pool.length)]
     }
 
+    convertToSubTiles(){
+      this.grid.forEach( cell => {
+        for(let y = 0; y < 3; y++){
+          for(let x = 0; x < 3; x++){
+            let value = tilesConfig[cell.options[0]].subTiles[x+(y*3)]
+            this.subGrid[ (cell.x*3) + x ][ (cell.y*3) + y ] = {...this.subGrid[ (cell.x*3) + x ][ (cell.y*3) + y ], value}
+          }
+        }
+      })
+    }
+
     update(){
+
+      this.iterations += 1
         let gridCopy = this.grid.slice();
         gridCopy = gridCopy.filter((cell) => !cell.collapsed);
 
         if (gridCopy.length == 0) {
           console.log("finished");
-            this.stop()
-            return;
+          this.stop()
+          this.finished = true
+          setTimeout( () => {
+            this.convertToSubTiles()
+          },1)
+          
+          this.draw()
+          setTimeout( () => {
+            this.drawSubGrid()
+          },10)
+          return;
         }
 
         gridCopy.sort((a, b) => {
@@ -264,6 +288,28 @@ class WFC {
         this.grid = nextGrid
     }
 
+    showProgress(){
+      const percent = Math.floor((this.iterations/this.maxIterations)*100)
+      if(this.finished) return
+      const txt = "Progress: " + percent  + "%"
+      this.ctx.fillStyle = "white"
+      this.ctx.fillRect(15,15,200,50)
+      this.ctx.font = "25px Arial"
+      this.ctx.fillStyle = "black"
+      this.ctx.fillText(txt, 45,50)
+    }
+
+    drawSubGrid(){
+      for(let x = 0; x < this.tilesPerRow*3; x++){
+        for(let y = 0; y < this.tilesPerColumn*3; y++){
+          const subTile = this.subGrid[x][y]
+          this.ctx.strokeStyle = "#777"
+          this.ctx.lineWidth = 1
+          this.ctx.strokeRect(subTile.x * this.subTileSize, subTile.y * this.subTileSize,this.subTileSize,this.subTileSize)
+        }
+      }
+    }
+
     draw(){
         this.ctx.clearRect(0,0,this.canvasWidth,this.canvasHeight)
         this.ctx.strokeStyle = "#333"
@@ -272,7 +318,7 @@ class WFC {
 
         this.grid.forEach( cell => {
             if(cell.collapsed){
-              let image = this.tileImages[cell.options[0]]
+              let image = this.tiles[cell.options[0]].image
               this.ctx.drawImage(image,cell.x * this.tileSize, cell.y * this.tileSize, this.tileSize, this.tileSize)
       
             }else{
@@ -292,7 +338,8 @@ class WFC {
                 }
                 this.ctx.strokeText(entropy, (cell.x * this.tileSize)+7, (cell.y* this.tileSize)+25)
             }
-        })   
+        }) 
+        this.showProgress()  
     }     
 }
 
