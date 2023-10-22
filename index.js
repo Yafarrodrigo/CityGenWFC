@@ -3,70 +3,98 @@ import Tile from "./Tile.js";
 
 class WFC {
     constructor(w,h){
-        this.canvas = document.getElementById('canvas')
-        this.ctx = canvas.getContext('2d')
 
-        this.canvas.width = w
-        this.canvas.height = h
+      this.defaultSettings = {
+        wieghts: {
+          empty: 50,
+          cross: 5,
+          horizontal: 15,
+          vertical: 15,
+          corner: 1,
+          t: 10
+        },
+        speed: 16
+      }
 
-        this.tileSize = 40
-        this.tilesPerColumn = Math.floor(h / this.tileSize)
-        this.tilesPerRow = Math.floor(w / this.tileSize)
+      const emptySlider = document.getElementById("emptyTileWeight")
+      emptySlider.value = emptySlider.nextElementSibling.value = this.defaultSettings.wieghts.empty
+      const crossSlider = document.getElementById("crossTileWeight")
+      crossSlider.value = crossSlider.nextElementSibling.value = this.defaultSettings.wieghts.cross
+      const horizontalSlider = document.getElementById("horizontalTileWeight")
+      horizontalSlider.value = horizontalSlider.nextElementSibling.value = this.defaultSettings.wieghts.horizontal
+      const verticalSlider = document.getElementById("verticalTileWeight")
+      verticalSlider.value = verticalSlider.nextElementSibling.value = this.defaultSettings.wieghts.vertical
+      const cornerSlider = document.getElementById("cornersTileWeight")
+      cornerSlider.value = cornerSlider.nextElementSibling.value = this.defaultSettings.wieghts.corner
+      const tSlider = document.getElementById("tTileWeight")
+      tSlider.value = tSlider.nextElementSibling.value = this.defaultSettings.wieghts.t
+      const speedSlider = document.getElementById("gameSpeed")
+      speedSlider.value = speedSlider.nextElementSibling.value = this.defaultSettings.speed
 
-        this.ctx.fillStyle = "black"
-        this.ctx.fillRect(0,0,w,h)
+      this.canvas = document.getElementById('canvas')
+      this.ctx = canvas.getContext('2d')
 
-        this.tileImages = []
-        this.allTiles = ["empty","cross","vertical","horizontal","topT","rightT","bottomT","leftT","cornerTL","cornerTR","cornerBL","cornerBR","buildingUp","buildingDown","buildingLeft","buildingRight"]
-        this.allTiles.forEach( item => {
-            const newImg = new Image()
-            newImg.src = `./${item}.jpg`
-            this.tileImages.push(newImg)
-        })
-        this.tiles = []
+      this.canvas.width = w
+      this.canvas.height = h
 
-        this.tiles[0] = new Tile(this.tileImages[0],   [ "eee", "eee", "eee", "eee" ], 1);     // empty
-        this.tiles[1] = new Tile(this.tileImages[1],   [ "brb", "brb", "brb", "brb" ], 1);      // cross
-        this.tiles[2] = new Tile(this.tileImages[2],   [ "brb", "eee", "brb", "eee" ], 1);     // vertical
-        this.tiles[3] = new Tile(this.tileImages[3],   [ "eee", "brb", "eee", "brb" ], 1);     // horizontal
-        this.tiles[4] = new Tile(this.tileImages[4],   [ "brb", "brb", "eee", "brb" ], 1);      // topT
-        this.tiles[5] = new Tile(this.tileImages[5],   [ "brb", "brb", "brb", "eee" ], 1);      // rigthT
-        this.tiles[6] = new Tile(this.tileImages[6],   [ "eee", "brb", "brb", "brb" ], 1);      // bottomT
-        this.tiles[7] = new Tile(this.tileImages[7],   [ "brb", "eee", "brb", "brb" ], 1);      // leftT
-        this.tiles[8] = new Tile(this.tileImages[8],   [ "brb", "eee", "eee", "brb" ], 1);      // cornerTL
-        this.tiles[9] = new Tile(this.tileImages[9],   [ "brb", "brb", "eee", "eee" ], 1);      // cornerTR
-        this.tiles[10] = new Tile(this.tileImages[10], [ "eee", "eee", "brb", "brb" ], 1);    // cornerBL
-        this.tiles[11] = new Tile(this.tileImages[11], [ "eee", "brb", "brb", "eee" ], 1);    // cornerBR
+      this.tileSize = 80
+      this.tilesPerColumn = Math.floor(h / this.tileSize)
+      this.tilesPerRow = Math.floor(w / this.tileSize)
 
-        /* window.addEventListener('click', (evt) => {
-          const rect = this.canvas.getBoundingClientRect();
-          const x = Math.floor((evt.clientX - rect.left)/this.tileSize)
-          const y = Math.floor((evt.clientY - rect.top)/this.tileSize)
-          console.log(this.getTileAt(x,y));
-      }) */
-      document.getElementById('generateButton').addEventListener('click', (e) => {
-        e.preventDefault()
-        this.handleGenerateButton()
+      this.ctx.fillStyle = "black"
+      this.ctx.fillRect(0,0,w,h)
+
+      this.tileImages = []
+      this.allTiles = ["empty","cross","vertical","horizontal","topT","rightT","bottomT","leftT","cornerTL","cornerTR","cornerBL","cornerBR","buildingUp","buildingDown","buildingLeft","buildingRight"]
+      this.allTiles.forEach( item => {
+          const newImg = new Image()
+          newImg.src = `./images/${item}.jpg`
+          this.tileImages.push(newImg)
       })
+      this.tiles = []
 
-      document.getElementById('gameSpeed').addEventListener('change', (e) => {
-        e.preventDefault()
-        this.handleChangeSpeedSlider(e)
-      })
-      dragElement(document.getElementById('controller'))
+      this.tiles[0] = new Tile(this.tileImages[0],   [ "eee", "eee", "eee", "eee" ], 1);     // empty
+      this.tiles[1] = new Tile(this.tileImages[1],   [ "brb", "brb", "brb", "brb" ], 1);      // cross
+      this.tiles[2] = new Tile(this.tileImages[2],   [ "brb", "eee", "brb", "eee" ], 1);     // vertical
+      this.tiles[3] = new Tile(this.tileImages[3],   [ "eee", "brb", "eee", "brb" ], 1);     // horizontal
+      this.tiles[4] = new Tile(this.tileImages[4],   [ "brb", "brb", "eee", "brb" ], 1);      // topT
+      this.tiles[5] = new Tile(this.tileImages[5],   [ "brb", "brb", "brb", "eee" ], 1);      // rigthT
+      this.tiles[6] = new Tile(this.tileImages[6],   [ "eee", "brb", "brb", "brb" ], 1);      // bottomT
+      this.tiles[7] = new Tile(this.tileImages[7],   [ "brb", "eee", "brb", "brb" ], 1);      // leftT
+      this.tiles[8] = new Tile(this.tileImages[8],   [ "brb", "eee", "eee", "brb" ], 1);      // cornerTL
+      this.tiles[9] = new Tile(this.tileImages[9],   [ "brb", "brb", "eee", "eee" ], 1);      // cornerTR
+      this.tiles[10] = new Tile(this.tileImages[10], [ "eee", "eee", "brb", "brb" ], 1);    // cornerBL
+      this.tiles[11] = new Tile(this.tileImages[11], [ "eee", "brb", "brb", "eee" ], 1);    // cornerBR
 
-        for (let i = 0; i < this.tiles.length; i++) {
-            const tile = this.tiles[i];
-            tile.analyze(this.tiles);
-        }
+      /* window.addEventListener('click', (evt) => {
+        const rect = this.canvas.getBoundingClientRect();
+        const x = Math.floor((evt.clientX - rect.left)/this.tileSize)
+        const y = Math.floor((evt.clientY - rect.top)/this.tileSize)
+        console.log(this.getTileAt(x,y));
+    }) */
+    document.getElementById('generateButton').addEventListener('click', (e) => {
+      e.preventDefault()
+      this.handleGenerateButton()
+    })
 
-        this.timer = null
-        this.speed = 100
+    document.getElementById('gameSpeed').addEventListener('change', (e) => {
+      e.preventDefault()
+      this.handleChangeSpeedSlider(e)
+    })
+    dragElement(document.getElementById('controller'))
 
-        this.grid = []
-        this.start()
+      for (let i = 0; i < this.tiles.length; i++) {
+          const tile = this.tiles[i];
+          tile.analyze(this.tiles);
+      }
 
-        this.draw()
+      this.timer = null
+      this.speed = this.defaultSettings.speed
+
+      this.grid = []
+      this.start()
+
+      this.draw()
     }
 
     handleChangeSpeedSlider(e){
