@@ -3,11 +3,11 @@ import Tile from "./Tile.js"
 import tilesConfig from "./tilesConfig.js"
 
 export default class Map {
-    constructor(w,h){
+    constructor(w,h, size){
         this.baseLayer = []
         this.tiles = []
 
-        this.tileSize = 90
+        this.tileSize = size
         this.subTileSize = this.tileSize / 3 
         
         this.tilesPerColumn = Math.floor(h / this.tileSize)
@@ -74,15 +74,43 @@ export default class Map {
       this.baseLayer.forEach( cell => {
         for(let y = 0; y < 3; y++){
           for(let x = 0; x < 3; x++){
-            let value = tilesConfig[cell.options[0]].subTiles[x+(y*3)]
-            this.tiles[ (cell.x*3) + x ][ (cell.y*3) + y ] = {...this.tiles[ (cell.x*3) + x ][ (cell.y*3) + y ], value}
+            const value = tilesConfig[cell.options[0]].subTiles[x+(y*3)]
+            const img = new Image()
+            if(value === "empty"){
+              img.src = "./images/subTiles/sub_empty.jpg"
+            }else if(value === "cross"){
+              img.src = "./images/subTiles/sub_cross.jpg"
+            } else if(value === "horizontal"){
+              img.src = "./images/subTiles/sub_horizontal.jpg"
+            } else if(value === "vertical"){
+              img.src = "./images/subTiles/sub_vertical.jpg"
+            } else if(value === "leftT"){
+              img.src = "./images/subTiles/sub_leftT.jpg"
+            } else if(value === "rightT"){
+              img.src = "./images/subTiles/sub_rightT.jpg"
+            } else if(value === "topT"){
+              img.src = "./images/subTiles/sub_topT.jpg"
+            } else if(value === "bottomT"){
+              img.src = "./images/subTiles/sub_bottomT.jpg"
+            } else if(value === "cornerTR"){
+              img.src = "./images/subTiles/sub_cornerTR.jpg"
+            } else if(value === "cornerTL"){
+              img.src = "./images/subTiles/sub_cornerTL.jpg"
+            } else if(value === "cornerBR"){
+              img.src = "./images/subTiles/sub_cornerBR.jpg"
+            } else if(value === "cornerBL"){
+              img.src = "./images/subTiles/sub_cornerBL.jpg"
+            } else {
+              img.src = "./images/subTiles/sub_empty.jpg"
+            }
+            this.tiles[ (cell.x*3) + x ][ (cell.y*3) + y ] = {...this.tiles[ (cell.x*3) + x ][ (cell.y*3) + y ], value, img}
           }
         }
       })
     }
 
     processBaseLayer(game){
-
+      if(game.finished) return
         this.iterations += 1
           let gridCopy = this.baseLayer.slice();
           gridCopy = gridCopy.filter((cell) => !cell.collapsed);
@@ -91,15 +119,27 @@ export default class Map {
             console.log("finished");
             game.stop()
             game.finished = true
+            game.graphics.draw(game)
+            
             setTimeout( () => {
               this.convertToSubTiles()
+              let rndX = Math.floor(Math.random()* this.tiles.length)
+              let rndY = Math.floor(Math.random()* this.tiles[0].length)
+              game.player.x = this.tiles[rndX][rndY].x * this.subTileSize
+              game.player.y = this.tiles[rndX][rndY].y * this.subTileSize
             },1)
             
-            game.graphics.draw(game)
             setTimeout( () => {
-              game.graphics.drawSubGrid(game)
+              game.graphics.updateViewport(game, game.player.x, game.player.y)
+              game.graphics.drawViewport(game)
+
+              game.timer = setInterval(()=>{
+                game.update2()
+              }, 16)
+              //game.graphics.drawSubGrid(game)
+              //game.graphics.drawBuildings(game)
             },10)
-            return;
+            return
           }
   
           gridCopy.sort((a, b) => {

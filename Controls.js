@@ -5,14 +5,19 @@ export default class Controls{
         this.defaultSettings = {
             weights: {
                 empty: 10,
-                cross: 50,
-                horizontal: 1,
-                vertical: 1,
+                cross: 25,
+                horizontal: 20,
+                vertical: 20,
                 corner: 1,
                 t: 1
             },
             speed: 16
         }
+
+        this.UP = false
+        this.RIGHT = false
+        this.DOWN = false
+        this.LEFT = false
 
         this.emptySlider = document.getElementById("emptyTileWeight")
         this.crossSlider = document.getElementById("crossTileWeight")
@@ -41,6 +46,47 @@ export default class Controls{
         })
 
         this.dragElement(document.getElementById('controller'))
+
+        document.addEventListener('keydown', (e) => {
+          switch (e.key) {
+              case "A":
+              case "a":
+                  this.LEFT = true
+                  break;
+              case "D":
+              case "d":
+                  this.RIGHT = true
+                  break;
+              case "W":
+              case "w":
+                  this.UP = true
+                  break;
+              case "S":
+              case "s":
+                  this.DOWN = true
+                  break;
+          }
+      })
+      document.addEventListener('keyup', (e) => {
+          switch (e.key) {
+              case "A":
+              case "a":
+                  this.LEFT = false
+                  break;
+              case "D":
+              case "d":
+                  this.RIGHT = false
+                  break;
+              case "W":
+              case "w":
+                  this.UP = false
+                  break;
+              case "S":
+              case "s":
+                  this.DOWN = false
+                  break;
+          }
+      })
     }
 
     changeSpeed(newSpeed){

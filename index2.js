@@ -4,7 +4,7 @@ import Map from "./Map.js"
 
 class WFC {
     constructor(w,h){
-        this.map = new Map(w,h)
+        this.map = new Map(w,h, 90)
         this.graphics = new Graphics(w,h)
         this.controls = new Controls(this)
         this.timer = null
@@ -16,6 +16,11 @@ class WFC {
             const y = Math.floor((evt.clientY - rect.top)/this.map.subTileSize)
             console.log(this.map.getSubTileAt(x,y));
         })
+
+        this.player = {
+            x: 0,
+            y: 0
+        }
 
         document.getElementById('controller').style.visibility = "visible"
         this.start()
@@ -41,6 +46,17 @@ class WFC {
 
     update(){
         this.map.processBaseLayer(this)
+    }
+
+    update2(){
+
+        if(this.controls.RIGHT) this.player.x += 5
+        if(this.controls.LEFT) this.player.x -= 5
+        if(this.controls.UP) this.player.y -= 5
+        if(this.controls.DOWN) this.player.y += 5
+
+        this.graphics.updateViewport(this, this.player.x, this.player.y)
+        this.graphics.drawViewport(this)
     }
 }
 
