@@ -24,7 +24,7 @@ export default class Graphics {
 
     updateViewport(game, targetX,targetY){
         
-      const tileSize = this.viewTileSize //game.map.subTileSize
+      const tileSize = this.viewTileSize
 
       this.viewport.screen.x = window.innerWidth
       this.viewport.screen.y = window.innerHeight
@@ -70,12 +70,14 @@ export default class Graphics {
       }
   
       drawSubGrid(game){
+        const tileSize = this.viewTileSize
+        const { offset } = this.viewport
         for(let x = 0; x < game.map.tilesPerRow*3; x++){
           for(let y = 0; y < game.map.tilesPerColumn*3; y++){
             const subTile = game.map.tiles[x][y]
             this.ctx.strokeStyle = "#777"
             this.ctx.lineWidth = 1
-            this.ctx.strokeRect(subTile.x * game.map.subTileSize, subTile.y * game.map.subTileSize,game.map.subTileSize,game.map.subTileSize)
+            this.ctx.strokeRect((subTile.x * tileSize)+offset.x, (subTile.y * tileSize)+offset.y,tileSize,tileSize)
           }
         }
       }
@@ -89,8 +91,8 @@ export default class Graphics {
         this.ctx.fillStyle = "black"
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height)
 
-        for(let x = this.viewport.startTile.x; x < this.viewport.endTile.x; x++){
-          for(let y = this.viewport.startTile.y; y < this.viewport.endTile.y; y++){
+        for(let x = this.viewport.startTile.x; x <= this.viewport.endTile.x; x++){
+          for(let y = this.viewport.startTile.y; y <= this.viewport.endTile.y; y++){
 
             const subTile = game.map.tiles[x][y]
 
@@ -102,6 +104,7 @@ export default class Graphics {
           }
         }
 
+        this.drawSubGrid(game)
         this.drawPlayer(game.player)
       }
 

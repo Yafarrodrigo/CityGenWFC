@@ -4,7 +4,7 @@ import Map from "./Map.js"
 
 class WFC {
     constructor(w,h){
-        this.map = new Map(w,h, 90)
+        this.map = new Map(w,h, 150)
         this.graphics = new Graphics(w,h)
         this.controls = new Controls(this)
         this.timer = null
@@ -12,8 +12,8 @@ class WFC {
 
         window.addEventListener('click', (evt) => {
             const rect = this.graphics.canvas.getBoundingClientRect();
-            const x = Math.floor((evt.clientX - rect.left)/this.map.subTileSize)
-            const y = Math.floor((evt.clientY - rect.top)/this.map.subTileSize)
+            const x = Math.floor((evt.clientX - rect.left - this.graphics.viewport.offset.x)/this.graphics.viewTileSize)
+            const y = Math.floor((evt.clientY - rect.top - this.graphics.viewport.offset.y)/this.graphics.viewTileSize)
             console.log(this.map.getSubTileAt(x,y));
         })
 
@@ -22,33 +22,22 @@ class WFC {
             y: 0
         }
 
-        document.getElementById('controller').style.visibility = "visible"
-        this.start()
+        document.getElementById('controller').style.visibility = "hidden"
     }
 
-
-    start(){
-    this.stop()
-    this.finished = false
-
-    this.map.populateBaseLayer()
-
-    this.timer = setInterval(()=>{
-        this.update()
-        this.graphics.draw(this)
-    }, this.speed)
-    }
-
-    stop(){
-        if(this.timer) clearInterval(this.timer)
-        this.timer = null
+    generateMap(){
+        this.finished = false
+        this.map.populateBaseLayer()
+        while(this.finished === false){
+            this.map.processBaseLayer(this)
+            this.graphics.draw(this)
+        }
+        this.timer = setInterval(()=>{
+            this.update()
+        },this.speed)
     }
 
     update(){
-        this.map.processBaseLayer(this)
-    }
-
-    update2(){
 
         if(this.controls.RIGHT) this.player.x += 5
         if(this.controls.LEFT) this.player.x -= 5
@@ -61,3 +50,4 @@ class WFC {
 }
 
 const wfc = new WFC(window.innerWidth, window.innerHeight)
+wfc.generateMap()

@@ -117,28 +117,16 @@ export default class Map {
   
           if (gridCopy.length == 0) {
             console.log("finished");
-            game.stop()
             game.finished = true
-            game.graphics.draw(game)
             
-            setTimeout( () => {
-              this.convertToSubTiles()
-              let rndX = Math.floor(Math.random()* this.tiles.length)
-              let rndY = Math.floor(Math.random()* this.tiles[0].length)
-              game.player.x = this.tiles[rndX][rndY].x * this.subTileSize
-              game.player.y = this.tiles[rndX][rndY].y * this.subTileSize
-            },1)
+            this.convertToSubTiles()
+            game.player.x = this.tiles[Math.floor(this.tiles.length/2)][Math.floor(this.tiles[0].length/2)].x * this.subTileSize
+            game.player.y = this.tiles[Math.floor(this.tiles.length/2)][Math.floor(this.tiles[0].length/2)].y * this.subTileSize
             
             setTimeout( () => {
               game.graphics.updateViewport(game, game.player.x, game.player.y)
               game.graphics.drawViewport(game)
-
-              game.timer = setInterval(()=>{
-                game.update2()
-              }, 16)
-              //game.graphics.drawSubGrid(game)
-              //game.graphics.drawBuildings(game)
-            },10)
+            },1)
             return
           }
   
