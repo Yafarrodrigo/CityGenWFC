@@ -1,6 +1,7 @@
 import Controls from "./Controls.js"
 import Graphics from "./Graphics.js"
 import Map from "./Map.js"
+import Player from "./Player.js"
 
 class WFC {
     constructor(w,h){
@@ -17,10 +18,7 @@ class WFC {
             console.log(this.map.getSubTileAt(x,y));
         })
 
-        this.player = {
-            x: 0,
-            y: 0
-        }
+        this.player = new Player()
 
         document.getElementById('controller').style.visibility = "hidden"
     }
@@ -39,12 +37,9 @@ class WFC {
 
     update(){
 
-        if(this.controls.RIGHT) this.player.x += 5
-        if(this.controls.LEFT) this.player.x -= 5
-        if(this.controls.UP) this.player.y -= 5
-        if(this.controls.DOWN) this.player.y += 5
+        const {viewTileSize} = this.graphics
 
-        this.graphics.updateViewport(this, this.player.x, this.player.y)
+        this.graphics.updateViewport(this, (this.player.x * viewTileSize), (this.player.y * viewTileSize))
         this.graphics.drawViewport(this)
     }
 }

@@ -51,9 +51,10 @@ export default class Graphics {
     }
 
     drawPlayer(player){
+      const {offset} = this.viewport
       this.ctx.fillStyle = "red"
       this.ctx.beginPath()
-      this.ctx.arc(player.x + this.viewport.offset.x, player.y + this.viewport.offset.y, 5,0, Math.PI*2)
+      this.ctx.arc((player.x * this.viewTileSize) + offset.x + (this.viewTileSize/2), (player.y * this.viewTileSize) + offset.y + (this.viewTileSize/2), 15,0, Math.PI*2)
       this.ctx.closePath()
       this.ctx.fill()
     }

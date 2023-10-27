@@ -39,7 +39,9 @@ export default class Map {
         return this.baseLayer[y+ x*this.tilesPerColumn]
     }
     getSubTileAt(x,y){
-        return this.tiles[x][y]
+      let tile = this.tiles[x][y]
+      if(tile === undefined) return false
+      else return tile
     }
 
     populateBaseLayer(){
@@ -109,6 +111,10 @@ export default class Map {
       })
     }
 
+    getRandomTile(){
+      return this.tiles[Math.floor(Math.random()*this.tiles.length)][Math.floor(Math.random()*this.tiles[0].length)]
+    }
+
     processBaseLayer(game){
       if(game.finished) return
         this.iterations += 1
@@ -120,13 +126,12 @@ export default class Map {
             game.finished = true
             
             this.convertToSubTiles()
-            game.player.x = this.tiles[Math.floor(this.tiles.length/2)][Math.floor(this.tiles[0].length/2)].x * this.subTileSize
-            game.player.y = this.tiles[Math.floor(this.tiles.length/2)][Math.floor(this.tiles[0].length/2)].y * this.subTileSize
+            game.player.randomPosition(this)
             
-            setTimeout( () => {
-              game.graphics.updateViewport(game, game.player.x, game.player.y)
+           /*  setTimeout( () => {
+              game.graphics.updateViewport(game, game.player.x*this.subTileSize, game.player.y*this.subTileSize)
               game.graphics.drawViewport(game)
-            },1)
+            },1) */
             return
           }
   

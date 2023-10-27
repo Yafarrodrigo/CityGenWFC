@@ -51,19 +51,31 @@ export default class Controls{
           switch (e.key) {
               case "A":
               case "a":
+                if(this.LEFT === false && this.game.player.checkForRoad(this.game.map, "left")) {
+                  this.game.player.moveLeft()
                   this.LEFT = true
+                }
                   break;
               case "D":
               case "d":
+                if(this.RIGHT === false && this.game.player.checkForRoad(this.game.map, "right")) {
+                  this.game.player.moveRight()
                   this.RIGHT = true
+                }
                   break;
               case "W":
               case "w":
+                if(this.UP === false && this.game.player.checkForRoad(this.game.map, "up")) {
+                  this.game.player.moveUp()
                   this.UP = true
+                }
                   break;
               case "S":
               case "s":
+                if(this.DOWN === false && this.game.player.checkForRoad(this.game.map, "down")) {
+                  this.game.player.moveDown()
                   this.DOWN = true
+                }
                   break;
           }
       })
@@ -87,7 +99,7 @@ export default class Controls{
                   break;
           }
       })
-    }
+    } 
 
     changeSpeed(newSpeed){
         this.game.speed = newSpeed
