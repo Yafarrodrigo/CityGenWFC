@@ -1,0 +1,90 @@
+export default class Menu {
+    constructor(){
+        this.menuContainer = document.createElement('div')
+        this.menuContainer.id = "menuContainer"
+        this.itemsContainer = document.createElement('div')
+        this.itemsContainer.id = "menuItemsContainer"
+        this.optionsContainer = document.createElement('div')
+        this.optionsContainer.id = "menuOptionsContainer"
+        this.menuContainer.append(this.itemsContainer,this.optionsContainer)
+        document.body.append(this.menuContainer)
+
+        this.menuContainer.style.display = "none"
+        this.menuContainer.addEventListener('mouseleave',(e)=>{
+            this.menuContainer.style.display = "none"
+        })
+        document.getElementById('canvas').addEventListener('contextmenu', (e) => {
+            e.preventDefault()
+            this.menuContainer.style.display = "flex"
+            this.menuContainer.style.top = e.clientY - 20 +"px"
+            this.menuContainer.style.left = e.clientX - 20 +"px"
+        })
+
+        this.testMenu = {
+            item1: {
+                order: 0,
+                text: "item 1",
+                options: {}
+            },
+            item2: {
+                order: 1,
+                text: "item 2",
+                options: {opt1: {text: "2-1",value: "asdasd"}, opt2: {text: "2-2",value: "asdasd"}}
+            },
+            item3: {
+                order: 2,
+                text: "item 3",
+                options: {opt1: {text: "3-1",value:"asdasd"},opt2: {text: "3-2",value:"asdasd"}, opt3: {text: "3-3",value:"asdasd"},opt4: {text: "3-4",value:"asdasd"},opt5: {text: "3-5",value:"asdasd"},opt6: {text: "3-6",value:"asdasd"}}
+            },
+            item4: {
+                order: 3,
+                text: "item 5",
+                options: {opt1: {text: "4-1",value:"asdasd"},opt2: {text: "4-2",value:"asdasd"},opt3: {text: "4-3",value:"asdasd"},opt4: {text: "4-4",value:"asdasd"}}
+            }
+        }
+
+        this.currentItem = this.testMenu["item1"]
+    }
+
+    updateItems(){
+        this.itemsContainer.innerHTML = ""
+        for(let item in this.testMenu){
+            const itemText = this.testMenu[item].text
+
+            const newItem = document.createElement('div')
+            newItem.classList.add("menuItem")
+            newItem.id = item
+            newItem.innerText = itemText
+            if(Object.keys(this.testMenu[item].options).length === 0){
+                newItem.style.cursor = "pointer"
+            }else{
+                newItem.style.cursor = "initial"
+            }
+            newItem.addEventListener('mouseover', (e) => {
+                this.currentItem = this.testMenu[e.target.id]
+                this.updateOptions()
+            })
+
+            this.itemsContainer.append(newItem)
+        }        
+    }
+
+    updateOptions(){
+        this.optionsContainer.innerHTML = ""
+    
+        for(let opt in this.currentItem.options){
+            const option = this.currentItem.options[opt]
+            const newOption = document.createElement('div')
+            newOption.classList.add("menuItem")
+            newOption.innerText = option.text
+            newOption.id = opt
+            newOption.style.cursor = "pointer"
+            newOption.addEventListener('click', (e) => {
+                console.log(this.currentItem.options[e.target.id]);
+                this.menuContainer.style.display = "none"
+            })
+            this.optionsContainer.append(newOption)
+        }
+        this.optionsContainer.style.marginTop = this.currentItem.order * 40 + "px"
+    }
+}

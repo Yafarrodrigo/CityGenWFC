@@ -1,6 +1,7 @@
 import Controls from "./Controls.js"
 import Graphics from "./Graphics.js"
 import Map from "./Map.js"
+import Menu from "./Menu.js"
 import Player from "./Player.js"
 
 class WFC {
@@ -8,6 +9,7 @@ class WFC {
         this.map = new Map(w,h, 150)
         this.graphics = new Graphics(w,h)
         this.controls = new Controls(this)
+        this.rightClickMenu = new Menu()
         this.timer = null
         this.speed = 16
 
@@ -21,6 +23,8 @@ class WFC {
         this.player = new Player()
 
         document.getElementById('controller').style.visibility = "hidden"
+        this.rightClickMenu.updateItems()
+        this.rightClickMenu.updateOptions("item3")
     }
 
     generateMap(){
