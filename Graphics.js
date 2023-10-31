@@ -12,7 +12,7 @@ export default class Graphics {
         this.ctx.fillStyle = "black"
         this.ctx.fillRect(0,0,w,h)
 
-        this.viewTileSize = 100
+        this.viewTileSize = 75
 
         this.viewport = {
           screen: {x:w,y:h},
@@ -26,8 +26,8 @@ export default class Graphics {
         
       const tileSize = this.viewTileSize
 
-      this.viewport.screen.x = window.innerWidth
-      this.viewport.screen.y = window.innerHeight
+      this.viewport.screen.x = this.w
+      this.viewport.screen.y = this.h
 
       this.viewport.offset.x = Math.floor((this.viewport.screen.x/2) - Math.round(targetX))
       this.viewport.offset.y = Math.floor((this.viewport.screen.y/2) - Math.round(targetY))

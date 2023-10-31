@@ -1,13 +1,14 @@
 import Cell from "./Cell.js"
-import Tile from "./Tile.js"
+import BaseTile from "./BaseTile.js"
 import tilesConfig from "./tilesConfig.js"
+import Tile from "./Tile.js"
 
 export default class Map {
-    constructor(w,h, size){
+    constructor(w,h){
         this.baseLayer = []
         this.tiles = []
 
-        this.tileSize = size
+        this.tileSize = 60
         this.subTileSize = this.tileSize / 3 
         
         this.tilesPerColumn = Math.floor(h / this.tileSize)
@@ -18,7 +19,7 @@ export default class Map {
 
         this.baseTiles = []
         tilesConfig.forEach( tileInfo => {
-        this.baseTiles.push( new Tile(tileInfo))
+        this.baseTiles.push( new BaseTile(tileInfo))
 
         for (let i = 0; i < this.baseTiles.length; i++) {
             const tile = this.baseTiles[i];
@@ -39,6 +40,7 @@ export default class Map {
         return this.baseLayer[y+ x*this.tilesPerColumn]
     }
     getSubTileAt(x,y){
+      if(x<0 || y < 0 || x > (this.tilesPerRow*3)-1 || y > (this.tilesPerColumn*3)-1) return false
       let tile = this.tiles[x][y]
       if(tile === undefined) return false
       else return tile
@@ -62,57 +64,32 @@ export default class Map {
         }
     }
 
-    selectRandomOption(options){
+    selectRandomOption(game,options){
       let pool = []
       options.forEach( opt => {
         for(let i = 0; i < this.baseTiles[opt].weight; i++){
           pool.push(opt)
         }
       })
-      return pool[Math.floor(Math.random()*pool.length)]
+      return pool[Math.floor(game.getRandomNum()*pool.length)]
     }
 
     convertToSubTiles(){
       this.baseLayer.forEach( cell => {
         for(let y = 0; y < 3; y++){
           for(let x = 0; x < 3; x++){
-            const value = tilesConfig[cell.options[0]].subTiles[x+(y*3)]
+            const subTileImgSrc = tilesConfig[cell.options[0]].subTiles[x+(y*3)]
+            const value = subTileImgSrc.split("sub_")[1]
             const img = new Image()
-            if(value === "empty"){
-              img.src = "./images/subTiles/sub_empty.jpg"
-            }else if(value === "cross"){
-              img.src = "./images/subTiles/sub_cross.jpg"
-            } else if(value === "horizontal"){
-              img.src = "./images/subTiles/sub_horizontal.jpg"
-            } else if(value === "vertical"){
-              img.src = "./images/subTiles/sub_vertical.jpg"
-            } else if(value === "leftT"){
-              img.src = "./images/subTiles/sub_leftT.jpg"
-            } else if(value === "rightT"){
-              img.src = "./images/subTiles/sub_rightT.jpg"
-            } else if(value === "topT"){
-              img.src = "./images/subTiles/sub_topT.jpg"
-            } else if(value === "bottomT"){
-              img.src = "./images/subTiles/sub_bottomT.jpg"
-            } else if(value === "cornerTR"){
-              img.src = "./images/subTiles/sub_cornerTR.jpg"
-            } else if(value === "cornerTL"){
-              img.src = "./images/subTiles/sub_cornerTL.jpg"
-            } else if(value === "cornerBR"){
-              img.src = "./images/subTiles/sub_cornerBR.jpg"
-            } else if(value === "cornerBL"){
-              img.src = "./images/subTiles/sub_cornerBL.jpg"
-            } else {
-              img.src = "./images/subTiles/sub_empty.jpg"
-            }
-            this.tiles[ (cell.x*3) + x ][ (cell.y*3) + y ] = {...this.tiles[ (cell.x*3) + x ][ (cell.y*3) + y ], value, img}
+            img.src = `./images/subTiles/${subTileImgSrc}.jpg`
+            this.tiles[ (cell.x*3) + x ][ (cell.y*3) + y ] = new Tile((cell.x*3) + x,(cell.y*3) + y, value, img)
           }
         }
       })
     }
 
-    getRandomTile(){
-      return this.tiles[Math.floor(Math.random()*this.tiles.length)][Math.floor(Math.random()*this.tiles[0].length)]
+    getRandomTile(game){
+      return this.tiles[Math.floor(game.getRandomNum()*this.tiles.length)][Math.floor(game.getRandomNum()*this.tiles[0].length)]
     }
 
     processBaseLayer(game){
@@ -126,12 +103,8 @@ export default class Map {
             game.finished = true
             
             this.convertToSubTiles()
-            game.player.randomPosition(this)
-            
-           /*  setTimeout( () => {
-              game.graphics.updateViewport(game, game.player.x*this.subTileSize, game.player.y*this.subTileSize)
-              game.graphics.drawViewport(game)
-            },1) */
+            game.player.randomPosition(game)
+
             return
           }
   
@@ -141,8 +114,8 @@ export default class Map {
   
           gridCopy = gridCopy.filter( cell => cell.options.length <= gridCopy[0].options.length)
   
-          const cell = gridCopy[Math.floor(Math.random()*gridCopy.length)]
-          const pick = this.selectRandomOption(cell.options)
+          const cell = gridCopy[Math.floor(game.getRandomNum()*gridCopy.length)]
+          const pick = this.selectRandomOption(game, cell.options)
           if (pick === undefined) {
               game.start()
               return;

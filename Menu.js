@@ -20,7 +20,7 @@ export default class Menu {
             this.menuContainer.style.left = e.clientX - 20 +"px"
         })
 
-        this.testMenu = {
+        this.menuInfo = {
             item1: {
                 order: 0,
                 text: "item 1",
@@ -42,26 +42,30 @@ export default class Menu {
                 options: {opt1: {text: "4-1",value:"asdasd"},opt2: {text: "4-2",value:"asdasd"},opt3: {text: "4-3",value:"asdasd"},opt4: {text: "4-4",value:"asdasd"}}
             }
         }
+        this.currentItem = this.menuInfo[Object.keys(this.menuInfo)[0]]
+    }
 
-        this.currentItem = this.testMenu["item1"]
+    changeMenuInfo(newInfo){
+        this.menuInfo = newInfo
+        this.currentItem = this.menuInfo[Object.keys(newInfo)[0]]
     }
 
     updateItems(){
         this.itemsContainer.innerHTML = ""
-        for(let item in this.testMenu){
-            const itemText = this.testMenu[item].text
+        for(let item in this.menuInfo){
+            const itemText = this.menuInfo[item].text
 
             const newItem = document.createElement('div')
             newItem.classList.add("menuItem")
             newItem.id = item
             newItem.innerText = itemText
-            if(Object.keys(this.testMenu[item].options).length === 0){
+            if(Object.keys(this.menuInfo[item].options).length === 0){
                 newItem.style.cursor = "pointer"
             }else{
                 newItem.style.cursor = "initial"
             }
             newItem.addEventListener('mouseover', (e) => {
-                this.currentItem = this.testMenu[e.target.id]
+                this.currentItem = this.menuInfo[e.target.id]
                 this.updateOptions()
             })
 

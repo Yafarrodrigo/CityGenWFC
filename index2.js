@@ -4,10 +4,20 @@ import Map from "./Map.js"
 import Menu from "./Menu.js"
 import Player from "./Player.js"
 
+function mulberry32(a) {
+    return function() {
+    var t = a += 0x6D2B79F5;
+    t = Math.imul(t ^ t >>> 15, t | 1);
+    t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+    return ((t ^ t >>> 14) >>> 0) / 4294967296
+    }
+}
+
 class WFC {
-    constructor(w,h){
-        this.map = new Map(w,h, 150)
-        this.graphics = new Graphics(w,h)
+    constructor(w,h, seed){
+        this.getRandomNum = mulberry32(seed)
+        this.map = new Map(w,h)
+        this.graphics = new Graphics(window.innerWidth,window.innerHeight)
         this.controls = new Controls(this)
         this.rightClickMenu = new Menu()
         this.timer = null
@@ -48,5 +58,5 @@ class WFC {
     }
 }
 
-const wfc = new WFC(window.innerWidth, window.innerHeight)
+const wfc = new WFC(1000, 1000, 50)
 wfc.generateMap()

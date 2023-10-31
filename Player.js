@@ -4,11 +4,11 @@ export default class Player{
         this.y = 0
     }
 
-    randomPosition(map){
-        let tile = map.getRandomTile()
+    randomPosition(game){
+        let tile = game.map.getRandomTile(game)
         console.log(tile.value);
         while(tile.value === "empty"){
-            tile = map.getRandomTile()
+            tile = game.map.getRandomTile(game)
             console.log(tile.value);
         }
         this.x = tile.x
@@ -21,7 +21,7 @@ export default class Player{
     moveDown(){ this.y += 1 }
 
     checkForRoad(map, dir){
-        let tile
+        let tile = null
         if(dir === "up"){
             tile = map.getSubTileAt(this.x, this.y - 1)
         }
@@ -34,6 +34,8 @@ export default class Player{
         else if(dir === "right"){
             tile = map.getSubTileAt(this.x + 1, this.y)
         }
-        return tile.value !== "empty"
+        if(tile === false) return false
+        if(tile.value !== "empty") return true
+        else return false
     }
 }
