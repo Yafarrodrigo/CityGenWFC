@@ -1,168 +1,92 @@
+import tilesConfig from "./tilesConfig.js"
+import Viewport from "./Viewport.js"
+
 export default class Graphics {
-    constructor(w,h){
-        this.w = w
-        this.h = h
+  constructor(w,h){
+    this.w = w
+    this.h = h
 
-        this.canvas = document.getElementById('canvas')
-        this.ctx = canvas.getContext('2d')
+    this.tileImgs = {}
+    tilesConfig.forEach( tileInfo => {
+      this.tileImgs[tileInfo.name] = new Image()
+      this.tileImgs[tileInfo.name].src = "./images/subTiles/" + "sub_" + tileInfo.name + ".jpg"
+    })
 
-        this.canvas.width = w
-        this.canvas.height = h
+    this.canvas = document.getElementById('canvas')
+    this.ctx = canvas.getContext('2d')
 
-        this.ctx.fillStyle = "black"
-        this.ctx.fillRect(0,0,w,h)
+    this.canvas.width = w
+    this.canvas.height = h
 
-        this.viewTileSize = 75
+    this.ctx.fillStyle = "black"
+    this.ctx.fillRect(0,0,w,h)
 
-        this.viewport = {
-          screen: {x:w,y:h},
-          startTile: {x:0,y:0},
-          endTile: {x:0,y:0},
-          offset: {x:0,y:0}
+    this.viewTileSize = 25
+
+    this.viewport = new Viewport(w,h,this.viewTileSize)
+  }
+
+
+  drawPlayer(player){
+    const {offset} = this.viewport
+    this.ctx.fillStyle = "red"
+    this.ctx.beginPath()
+    this.ctx.arc((player.x * this.viewTileSize) + offset.x + (this.viewTileSize/2), (player.y * this.viewTileSize) + offset.y + (this.viewTileSize/2), 15,0, Math.PI*2)
+    this.ctx.closePath()
+    this.ctx.fill()
+  }
+
+  showProgress(current, max){
+    this.ctx.clearRect(0,0,this.canvasWidth,this.canvasHeight)
+    const percent = Math.floor((current/max)*100)
+    const txt = "Generating Base Map: " + percent  + "%"
+    this.ctx.fillStyle = "white"
+    this.ctx.fillRect(15,15,350,50)
+    this.ctx.font = "25px Arial"
+    this.ctx.fillStyle = "black"
+    this.ctx.fillText(txt, 45,50)
+  }
+
+  drawSubGrid(game){
+    const tileSize = this.viewTileSize
+    const { offset } = this.viewport
+    for(let x = 0; x < game.map.tilesPerRow*3; x++){
+      for(let y = 0; y < game.map.tilesPerColumn*3; y++){
+        const subTile = game.map.tiles[x][y]
+        this.ctx.strokeStyle = "#777"
+        this.ctx.lineWidth = 1
+        this.ctx.strokeRect((subTile.x * tileSize)+offset.x, (subTile.y * tileSize)+offset.y,tileSize,tileSize)
       }
     }
+  }
 
-    updateViewport(game, targetX,targetY){
-        
-      const tileSize = this.viewTileSize
+  drawViewport(game){
 
-      this.viewport.screen.x = this.w
-      this.viewport.screen.y = this.h
+    const tileSize =  this.viewTileSize
 
-      this.viewport.offset.x = Math.floor((this.viewport.screen.x/2) - Math.round(targetX))
-      this.viewport.offset.y = Math.floor((this.viewport.screen.y/2) - Math.round(targetY))
+    this.ctx.clearRect(0,0,this.canvasWidth,this.canvasHeight)
+    this.ctx.strokeStyle = "#333"
+    this.ctx.fillStyle = "black"
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height)
 
-      const tile = {
-          x:Math.floor(targetX/tileSize),
-          y:Math.floor(targetY/tileSize)
+    for(let x = this.viewport.startTile.x; x <= this.viewport.endTile.x; x++){
+      for(let y = this.viewport.startTile.y; y <= this.viewport.endTile.y; y++){
+
+        const subTile = game.map.tiles[x][y]
+
+        const finalX = (subTile.x * tileSize) + this.viewport.offset.x
+        const finalY = (subTile.y * tileSize) + this.viewport.offset.y
+
+      
+        this.ctx.drawImage(this.tileImgs[subTile.img], finalX, finalY, tileSize, tileSize)
       }
-
-      this.viewport.startTile.x = tile.x - 1 - Math.ceil((this.viewport.screen.x/2) / tileSize)
-      this.viewport.startTile.y = tile.y - 1 - Math.ceil((this.viewport.screen.y/2) / tileSize)  
-
-      if(this.viewport.startTile.x < 0) this.viewport.startTile.x = 0
-      if(this.viewport.startTile.y < 0) this.viewport.startTile.y = 0
-
-      this.viewport.endTile.x = tile.x + 1 + Math.ceil((this.viewport.screen.x/2) / tileSize)
-      this.viewport.endTile.y = tile.y + 1 + Math.ceil((this.viewport.screen.y/2) / tileSize)
-
-      if(this.viewport.endTile.x >= (game.map.tilesPerRow*3)) this.viewport.endTile.x = (game.map.tilesPerRow*3) -1
-      if(this.viewport.endTile.y >= (game.map.tilesPerColumn*3)) this.viewport.endTile.y = (game.map.tilesPerColumn*3) -1
     }
+  }
 
-    drawPlayer(player){
-      const {offset} = this.viewport
-      this.ctx.fillStyle = "red"
-      this.ctx.beginPath()
-      this.ctx.arc((player.x * this.viewTileSize) + offset.x + (this.viewTileSize/2), (player.y * this.viewTileSize) + offset.y + (this.viewTileSize/2), 15,0, Math.PI*2)
-      this.ctx.closePath()
-      this.ctx.fill()
-    }
-
-    showProgress(game){
-        const percent = Math.floor((game.map.iterations/game.map.maxIterations)*100)
-        if(game.finished) return
-        const txt = "Progress: " + percent  + "%"
-        this.ctx.fillStyle = "white"
-        this.ctx.fillRect(15,15,200,50)
-        this.ctx.font = "25px Arial"
-        this.ctx.fillStyle = "black"
-        this.ctx.fillText(txt, 45,50)
-      }
-  
-      drawSubGrid(game){
-        const tileSize = this.viewTileSize
-        const { offset } = this.viewport
-        for(let x = 0; x < game.map.tilesPerRow*3; x++){
-          for(let y = 0; y < game.map.tilesPerColumn*3; y++){
-            const subTile = game.map.tiles[x][y]
-            this.ctx.strokeStyle = "#777"
-            this.ctx.lineWidth = 1
-            this.ctx.strokeRect((subTile.x * tileSize)+offset.x, (subTile.y * tileSize)+offset.y,tileSize,tileSize)
-          }
-        }
-      }
-
-      drawViewport(game){
-
-        const tileSize =  this.viewTileSize //game.map.subTileSize
-
-        this.ctx.clearRect(0,0,this.canvasWidth,this.canvasHeight)
-        this.ctx.strokeStyle = "#333"
-        this.ctx.fillStyle = "black"
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height)
-
-        for(let x = this.viewport.startTile.x; x <= this.viewport.endTile.x; x++){
-          for(let y = this.viewport.startTile.y; y <= this.viewport.endTile.y; y++){
-
-            const subTile = game.map.tiles[x][y]
-
-            const finalX = (subTile.x * tileSize) + this.viewport.offset.x
-            const finalY = (subTile.y * tileSize) + this.viewport.offset.y
-
-          
-            this.ctx.drawImage(subTile.img, finalX, finalY, tileSize, tileSize)
-          }
-        }
-
-        this.drawSubGrid(game)
-        this.drawPlayer(game.player)
-      }
-
-      drawHouse(x,y){
-
-        this.ctx.fillStyle = "brown"
-        this.ctx.fillRect(x+15, y+20, 20, 20)
-        this.ctx.strokeRect(x+15, y+20, 20, 20)
-        this.ctx.beginPath()
-        this.ctx.moveTo(x+15,y+20)
-        this.ctx.lineTo(x+25,y+10)
-        this.ctx.lineTo(x+35,y+20)
-        this.ctx.closePath()
-        this.ctx.stroke()
-        this.ctx.fill()
-      }
-
-      drawBuildings(game){
-        const {subTileSize} = game.map
-        for(let x = 0; x < game.map.tilesPerRow*3; x++){
-          for(let y = 0; y < game.map.tilesPerColumn*3; y++){
-            const tile = game.map.tiles[x][y]
-            if(tile.value !== "buildings") continue
-            this.drawHouse(tile.x*subTileSize, tile.y*subTileSize)
-          }
-        }
-      }
-  
-      draw(game){
-        this.ctx.clearRect(0,0,this.canvasWidth,this.canvasHeight)
-        this.ctx.strokeStyle = "#333"
-        this.ctx.fillStyle = "black"
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height)
-
-        game.map.baseLayer.forEach( cell => {
-            if(cell.collapsed){
-            let image = game.map.baseTiles[cell.options[0]].image
-            this.ctx.drawImage(image,cell.x * game.map.tileSize, cell.y * game.map.tileSize, game.map.tileSize, game.map.tileSize)
-    
-            }else{
-                const entropy = cell.options.length
-                this.ctx.strokeStyle = "#333"
-                this.ctx.strokeRect(cell.x * game.map.tileSize, cell.y * game.map.tileSize, game.map.tileSize, game.map.tileSize)
-                this.ctx.lineWidth = 1
-                this.ctx.font = "20px Arial"
-                if(entropy >= 12){
-                this.ctx.strokeStyle = "red"
-                }else if(entropy >= 7){
-                this.ctx.strokeStyle = "orange"
-                }else if(entropy >= 5){
-                this.ctx.strokeStyle = "yellow"
-                }else{
-                this.ctx.strokeStyle = "lime"
-                }
-                this.ctx.strokeText(entropy, (cell.x * game.map.tileSize)+7, (cell.y* game.map.tileSize)+25)
-            }
-        }) 
-        this.showProgress(game)  
-    }  
+  update(game){
+    this.viewport.updateViewport(game, (game.player.x * this.viewTileSize), (game.player.y * this.viewTileSize))
+    this.drawViewport(game)
+    this.drawSubGrid(game)
+    this.drawPlayer(game.player)
+  }
 }

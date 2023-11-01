@@ -1,5 +1,5 @@
 import Cell from "./Cell.js";
-import Tile from "./Tile.js";
+import {BaseTile as Tile} from "./BaseTile.js";
 import tilesConfig from "./tilesConfig.js";
 
 class WFC {

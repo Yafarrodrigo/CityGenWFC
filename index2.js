@@ -15,48 +15,77 @@ function mulberry32(a) {
 
 class WFC {
     constructor(w,h, seed){
+        
+        this.currentState = "loading" // "loading","generating map", "selecting player pos", "playing"
         this.getRandomNum = mulberry32(seed)
-        this.map = new Map(w,h)
         this.graphics = new Graphics(window.innerWidth,window.innerHeight)
-        this.controls = new Controls(this)
+        this.map = new Map(this, w,h)
+        
+        this.controls = new Controls()
+        this.controls.createListeners(this)
+
         this.rightClickMenu = new Menu()
         this.timer = null
         this.speed = 16
 
-        window.addEventListener('click', (evt) => {
-            const rect = this.graphics.canvas.getBoundingClientRect();
-            const x = Math.floor((evt.clientX - rect.left - this.graphics.viewport.offset.x)/this.graphics.viewTileSize)
-            const y = Math.floor((evt.clientY - rect.top - this.graphics.viewport.offset.y)/this.graphics.viewTileSize)
-            console.log(this.map.getSubTileAt(x,y));
-        })
-
         this.player = new Player()
-
-        document.getElementById('controller').style.visibility = "hidden"
+    
         this.rightClickMenu.updateItems()
         this.rightClickMenu.updateOptions("item3")
+
+        this.resetSave()
     }
 
-    generateMap(){
-        this.finished = false
-        this.map.populateBaseLayer()
-        while(this.finished === false){
-            this.map.processBaseLayer(this)
-            this.graphics.draw(this)
+    checkForSave(){
+        const save = localStorage.getItem('savedGame')
+        if(save){
+            const savedState = JSON.parse(save)
+            this.player.x = savedState.playerPos.x
+            this.player.y = savedState.playerPos.y
+            this.map.tiles = savedState.map
+            this.currentState = "playing"
+        }else{
+            this.currentState = "generating map"
         }
+    }
+
+    saveState(){
+        const currentState = {
+            playerPos: {x:this.player.x,y:this.player.y},
+            map: this.map.tiles
+        }
+        localStorage.setItem('savedGame', JSON.stringify(currentState))
+    }
+
+    resetSave(){
+        localStorage.removeItem('savedGame')
+    }
+
+    start(){
+        this.checkForSave()
         this.timer = setInterval(()=>{
             this.update()
         },this.speed)
     }
 
     update(){
-
-        const {viewTileSize} = this.graphics
-
-        this.graphics.updateViewport(this, (this.player.x * viewTileSize), (this.player.y * viewTileSize))
-        this.graphics.drawViewport(this)
+        if(this.currentState === "generating map"){
+            this.graphics.showProgress(this.map.mapGen.baseLayerIterations,this.map.mapGen.baseLayerMaxIterations)
+            if(this.map.mapGen.finished){
+                this.currentState = "selecting player pos"
+            }
+        }
+        // selecting player pos
+        else if(this.currentState === "selecting player pos"){
+            this.player.randomPosition(this)
+            this.saveState()
+            this.currentState = "playing"
+        }
+        else if(this.currentState === "playing"){
+            this.graphics.update(this)
+        }
     }
 }
 
-const wfc = new WFC(1000, 1000, 50)
-wfc.generateMap()
+const wfc = new WFC(500, 500, Math.floor(Math.random()*1000))
+wfc.start()

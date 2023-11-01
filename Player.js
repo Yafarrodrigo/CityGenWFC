@@ -5,11 +5,9 @@ export default class Player{
     }
 
     randomPosition(game){
-        let tile = game.map.getRandomTile(game)
-        console.log(tile.value);
+        let tile = game.map.getRandomTile(game.getRandomNum)
         while(tile.value === "empty"){
-            tile = game.map.getRandomTile(game)
-            console.log(tile.value);
+            tile = game.map.getRandomTile(game.getRandomNum)
         }
         this.x = tile.x
         this.y = tile.y 
@@ -23,16 +21,16 @@ export default class Player{
     checkForRoad(map, dir){
         let tile = null
         if(dir === "up"){
-            tile = map.getSubTileAt(this.x, this.y - 1)
+            tile = map.getTileAt(this.x, this.y - 1)
         }
         else if(dir === "down"){
-            tile = map.getSubTileAt(this.x, this.y + 1)
+            tile = map.getTileAt(this.x, this.y + 1)
         }
         else if(dir === "left"){
-            tile = map.getSubTileAt(this.x - 1, this.y)
+            tile = map.getTileAt(this.x - 1, this.y)
         }
         else if(dir === "right"){
-            tile = map.getSubTileAt(this.x + 1, this.y)
+            tile = map.getTileAt(this.x + 1, this.y)
         }
         if(tile === false) return false
         if(tile.value !== "empty") return true

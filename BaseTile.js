@@ -2,7 +2,7 @@ function compareEdge(a, b) {
   let reversed = b.split("").reverse().join("")
   return a == reversed
 }  
-export default class BaseTile {
+export class BaseTile {
   constructor(tileInfo) {
     this.name = tileInfo.name
     this.edges = tileInfo.edges
