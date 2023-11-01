@@ -9,7 +9,7 @@ export default class Graphics {
     this.tileImgs = {}
     tilesConfig.forEach( tileInfo => {
       this.tileImgs[tileInfo.name] = new Image()
-      this.tileImgs[tileInfo.name].src = "./images/subTiles/" + "sub_" + tileInfo.name + ".jpg"
+      this.tileImgs[tileInfo.name].src = "./images/" + tileInfo.name + ".jpg"
     })
 
     this.canvas = document.getElementById('canvas')

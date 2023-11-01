@@ -86,8 +86,7 @@ export default class MapGenerator {
       this.baseLayer.forEach( cell => {
         for(let y = 0; y < 3; y++){
           for(let x = 0; x < 3; x++){
-            const subTileImgSrc = tilesConfig[cell.options[0]].subTiles[x+(y*3)]
-            const value = subTileImgSrc.split("sub_")[1]
+            const value = tilesConfig[cell.options[0]].subTiles[x+(y*3)]
             const img = value
             this.finalTiles[ (cell.x*3) + x ][ (cell.y*3) + y ] = new Tile((cell.x*3) + x,(cell.y*3) + y, value, img)
           }

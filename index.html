@@ -10,47 +10,5 @@
 </head>
 <body>
     <canvas id="canvas"></canvas>
-    <div id="controller">
-    <!-- <div id="controller" style="visibility: hidden;"> -->
-        <header id="controllerHeader">
-            <h1>WEIGHTS</h1>
-            <button id="generateButton">Generate</button>
-        </header>
-        <div class="option">
-            <label for="emptyTileWeight">empty:</label>
-            <input type="range" value="50" min="0" max="100" oninput="this.nextElementSibling.value = this.value" name="emptyTileWeight" id="emptyTileWeight">
-            <output>1</output><span>x</span>
-        </div>
-        <div class="option">
-            <label for="crossTileWeight">cross:</label>
-            <input type="range" value="5" min="0" max="50" oninput="this.nextElementSibling.value = this.value" name="crossTileWeight" id="crossTileWeight">
-            <output>1</output><span>x</span>
-        </div>
-        <div class="option">
-            <label for="horizontalTileWeight">horizontal:</label>
-            <input type="range" value="15" min="0" max="50" oninput="this.nextElementSibling.value = this.value" name="horizontalTileWeight" id="horizontalTileWeight">
-            <output>1</output><span>x</span>
-        </div>
-        <div class="option">
-            <label for="verticalTileWeight">vertical:</label>
-            <input type="range" value="15" min="0" max="50" oninput="this.nextElementSibling.value = this.value" name="verticalTileWeight" id="verticalTileWeight">
-            <output>1</output><span>x</span>
-        </div>
-        <div class="option">
-            <label for="cornersTileWeight">corners</label>
-            <input type="range" value="1" min="0" max="50" oninput="this.nextElementSibling.value = this.value" name="cornersTileWeight" id="cornersTileWeight">
-            <output>1</output><span>x</span>
-        </div>
-        <div class="option">
-            <label for="tTileWeight">t</label>
-            <input type="range" value="10" min="0" max="50" oninput="this.nextElementSibling.value = this.value" name="tTileWeight" id="tTileWeight">
-            <output>1</output><span>x</span>
-        </div>
-        <div class="option">
-            <label for="gameSpeed">speed</label>
-            <input type="range" value="16" min="16" step="16" max="1024" oninput="this.nextElementSibling.value = this.value" name="gameSpeed" id="gameSpeed">
-            <output>128</output><span>ms</span>
-        </div>
-    </div>
 </body>
 </html>
