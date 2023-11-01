@@ -1,4 +1,4 @@
-import tilesConfig from "./tilesConfig.js"
+import tilesConfig from "../tilesConfig.js"
 import Viewport from "./Viewport.js"
 
 export default class Graphics {
@@ -8,8 +8,10 @@ export default class Graphics {
 
     this.tileImgs = {}
     tilesConfig.forEach( tileInfo => {
-      this.tileImgs[tileInfo.name] = new Image()
-      this.tileImgs[tileInfo.name].src = "./images/" + tileInfo.name + ".jpg"
+      if(tileInfo.imgName){
+        this.tileImgs[tileInfo.name] = new Image()
+        this.tileImgs[tileInfo.name].src = "./images/" + tileInfo.imgName + ".jpg"
+      }
     })
 
     this.canvas = document.getElementById('canvas')
@@ -21,7 +23,7 @@ export default class Graphics {
     this.ctx.fillStyle = "black"
     this.ctx.fillRect(0,0,w,h)
 
-    this.viewTileSize = 25
+    this.viewTileSize = 100
 
     this.viewport = new Viewport(w,h,this.viewTileSize)
   }
@@ -53,7 +55,7 @@ export default class Graphics {
     for(let x = 0; x < game.map.tilesPerRow*3; x++){
       for(let y = 0; y < game.map.tilesPerColumn*3; y++){
         const subTile = game.map.tiles[x][y]
-        this.ctx.strokeStyle = "#777"
+        this.ctx.strokeStyle = "#888"
         this.ctx.lineWidth = 1
         this.ctx.strokeRect((subTile.x * tileSize)+offset.x, (subTile.y * tileSize)+offset.y,tileSize,tileSize)
       }
@@ -77,10 +79,24 @@ export default class Graphics {
         const finalX = (subTile.x * tileSize) + this.viewport.offset.x
         const finalY = (subTile.y * tileSize) + this.viewport.offset.y
 
-      
         this.ctx.drawImage(this.tileImgs[subTile.img], finalX, finalY, tileSize, tileSize)
+
+        if(subTile.building !== null){
+          this.drawBuilding(subTile.building, finalX,finalY)
+        }
       }
     }
+  }
+
+  drawBuilding(building, x,y){
+    if(building === "gasStation") this.ctx.fillStyle = "rgb(0,255,0,0.25)"
+    else this.ctx.fillStyle = "rgb(0,0,255,0.25)"
+    this.ctx.fillRect(x+2,y+2, this.viewTileSize -2,this.viewTileSize -2)
+
+    this.ctx.font = "15px Arial"
+    this.ctx.strokeStyle = "black"
+    this.ctx.lineWidth = 1
+    this.ctx.strokeText(building, x+5 ,y+50 )
   }
 
   update(game){

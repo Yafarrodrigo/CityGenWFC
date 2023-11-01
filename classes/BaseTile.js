@@ -7,8 +7,6 @@ export class BaseTile {
     this.name = tileInfo.name
     this.edges = tileInfo.edges
     this.weight = tileInfo.weight
-    this.image = new Image()
-    this.image.src = tileInfo.img
     this.up = []
     this.right = []
     this.down = []

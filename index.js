@@ -1,8 +1,8 @@
-import Controls from "./Controls.js"
-import Graphics from "./Graphics.js"
-import Map from "./Map.js"
-import Menu from "./Menu.js"
-import Player from "./Player.js"
+import Controls from "./classes/Controls.js"
+import Graphics from "./classes/Graphics.js"
+import Map from "./classes/Map.js"
+import Menu from "./classes/Menu.js"
+import Player from "./classes/Player.js"
 
 function mulberry32(a) {
     return function() {

@@ -1,6 +1,6 @@
 import Cell from "./Cell.js"
 import {BaseTile} from "./BaseTile.js"
-import tilesConfig from "./tilesConfig.js"
+import tilesConfig from "../tilesConfig.js"
 import Tile from "./Tile.js"
 
 export default class MapGenerator {
@@ -82,13 +82,34 @@ export default class MapGenerator {
       return pool[Math.floor(game.getRandomNum()*pool.length)]
     }
 
-    convertToSubTiles(){
+    selectRandomBuilding(game){
+      const allBuildings = [{name:"houses",weight:100},{name:"departments",weight:10},
+                            {name:"shop",weight:25},{name:"hospital",weight:1},
+                            {name:"policeStation",weight:1},{name:"fireStation",weight:1},{name:"park",weight:5}]
+      let pool = []
+      allBuildings.forEach( building => {
+        for(let i = 0; i < building.weight; i++){
+          pool.push(building.name)
+        }
+      })
+      return pool[Math.floor(game.getRandomNum()*pool.length)]
+    }
+
+    convertToSubTiles(game){
       this.baseLayer.forEach( cell => {
         for(let y = 0; y < 3; y++){
           for(let x = 0; x < 3; x++){
             const value = tilesConfig[cell.options[0]].subTiles[x+(y*3)]
+            let building = null
+            if(cell.options[0] !== 0 && value === "empty"){
+              if(cell.options[0] === 12 && value === "empty"){ // roundel
+                building = "gasStation"
+              }else{
+                building = this.selectRandomBuilding(game)
+              }
+            }
             const img = value
-            this.finalTiles[ (cell.x*3) + x ][ (cell.y*3) + y ] = new Tile((cell.x*3) + x,(cell.y*3) + y, value, img)
+            this.finalTiles[ (cell.x*3) + x ][ (cell.y*3) + y ] = new Tile((cell.x*3) + x,(cell.y*3) + y, value, img, building)
           }
         }
       })
@@ -103,7 +124,7 @@ export default class MapGenerator {
           // FINISH
           if (gridCopy.length == 0) {
             this.timer = null
-            this.convertToSubTiles()
+            this.convertToSubTiles(game)
             this.finished = true
             return
           }
@@ -135,7 +156,10 @@ export default class MapGenerator {
                 nextGrid[index] = this.baseLayer[index];
               } else {
                   
-                let options = [0,1,2,3,4,5,6,7,8,9,10,11]
+                let options = []
+                for(let i = 0; i < tilesConfig.length; i++){
+                  options.push(i)
+                }
                 // Look up
                 if (y > 0) {
                   let up = this.getTileAtBaseLayer(x,y-1);
