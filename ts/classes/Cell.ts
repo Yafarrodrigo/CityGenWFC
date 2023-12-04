@@ -1,5 +1,9 @@
 export default class Cell {
-    constructor(x,y,value) {
+    x: number
+    y: number
+    collapsed: boolean
+    options: number[]
+    constructor(x: number,y: number,value: number|number[]) {
         this.x = x
         this.y = y
         this.collapsed = false;

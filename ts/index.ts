@@ -4,7 +4,7 @@ import Map from "./classes/Map.js"
 import Menu from "./classes/Menu.js"
 import Player from "./classes/Player.js"
 
-function mulberry32(a) {
+function mulberry32(a:number) {
     return function() {
     var t = a += 0x6D2B79F5;
     t = Math.imul(t ^ t >>> 15, t | 1);
@@ -13,10 +13,19 @@ function mulberry32(a) {
     }
 }
 
-class WFC {
-    constructor(w,h, seed){
+export default class Game {
+    currentState: "loading" |"generating map" | "selecting player pos" | "playing"
+    graphics: Graphics
+    map: Map
+    controls: Controls
+    rightClickMenu: Menu
+    timer: number | null
+    speed: number
+    player: Player
+    getRandomNum: ()=>number
+    constructor(w:number,h:number, seed:number){
         
-        this.currentState = "loading" // "loading","generating map", "selecting player pos", "playing"
+        this.currentState = "loading"
         this.getRandomNum = mulberry32(seed)
         this.graphics = new Graphics(window.innerWidth,window.innerHeight)
         this.map = new Map(this, w,h)
@@ -31,8 +40,9 @@ class WFC {
         this.player = new Player()
     
         this.rightClickMenu.updateItems()
-        this.rightClickMenu.updateOptions("item3")
+        //this.rightClickMenu.updateOptions("item3")
 
+        // KEEPS RE-GENERATING MAP
         this.resetSave()
     }
 
@@ -86,5 +96,5 @@ class WFC {
     }
 }
 
-const wfc = new WFC(1000, 1000, Math.floor(Math.random()*1000))
-wfc.start()
+const game = new Game(1000, 1000, Math.floor(Math.random()*1000))
+game.start()

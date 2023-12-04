@@ -1,10 +1,16 @@
+import Game from "../index"
+import Map from "./Map"
+import Tile from "./Tile"
+
 export default class Player{
+    x: number
+    y: number
     constructor(){
         this.x = 0
         this.y = 0
     }
 
-    randomPosition(game){
+    randomPosition(game: Game){
         let tile = game.map.getRandomTile(game.getRandomNum)
         while(tile.value === "empty"){
             tile = game.map.getRandomTile(game.getRandomNum)
@@ -18,8 +24,8 @@ export default class Player{
     moveUp(){ this.y -= 1 }
     moveDown(){ this.y += 1 }
 
-    checkForRoad(map, dir){
-        let tile = null
+    checkForRoad(map: Map, dir: string){
+        let tile: false | Tile = false
         if(dir === "up"){
             tile = map.getTileAt(this.x, this.y - 1)
         }
@@ -33,7 +39,7 @@ export default class Player{
             tile = map.getTileAt(this.x + 1, this.y)
         }
         if(tile === false) return false
-        if(tile.value !== "empty") return true
+        else if(tile.value !== "empty") return true
         else return false
     }
 }

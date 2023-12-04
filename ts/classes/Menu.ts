@@ -1,4 +1,11 @@
 export default class Menu {
+    menuContainer: HTMLDivElement
+    itemsContainer: HTMLDivElement
+    optionsContainer: HTMLDivElement
+    menuInfo: {
+        [key:string]: {order: number,text:string,options:{[key:string]:{text:string,value:string}}}
+    }
+    currentItem:{order: number,text:string,options:{[key:string]:{text:string,value:string}}}
     constructor(){
         this.menuContainer = document.createElement('div')
         this.menuContainer.id = "menuContainer"
@@ -10,10 +17,11 @@ export default class Menu {
         document.body.append(this.menuContainer)
 
         this.menuContainer.style.display = "none"
-        this.menuContainer.addEventListener('mouseleave',(e)=>{
+        this.menuContainer.addEventListener('mouseleave',()=>{
             this.menuContainer.style.display = "none"
         })
-        document.getElementById('canvas').addEventListener('contextmenu', (e) => {
+        const canvas = (document.getElementById('canvas') as HTMLCanvasElement)
+        canvas.addEventListener('contextmenu', (e:MouseEvent) => {
             e.preventDefault()
             this.menuContainer.style.display = "flex"
             this.menuContainer.style.top = e.clientY - 20 +"px"
@@ -45,7 +53,7 @@ export default class Menu {
         this.currentItem = this.menuInfo[Object.keys(this.menuInfo)[0]]
     }
 
-    changeMenuInfo(newInfo){
+    changeMenuInfo(newInfo:{[key:string]: {order: number,text:string,options:{[key:string]:{text:string,value:string}}}}){
         this.menuInfo = newInfo
         this.currentItem = this.menuInfo[Object.keys(newInfo)[0]]
     }
@@ -64,9 +72,11 @@ export default class Menu {
             }else{
                 newItem.style.cursor = "initial"
             }
-            newItem.addEventListener('mouseover', (e) => {
-                this.currentItem = this.menuInfo[e.target.id]
-                this.updateOptions()
+            newItem.addEventListener('mouseover', (e:MouseEvent) => {
+                if (e.target instanceof Element){
+                    this.currentItem = this.menuInfo[e.target.id]
+                    this.updateOptions()
+                }
             })
 
             this.itemsContainer.append(newItem)
@@ -84,8 +94,10 @@ export default class Menu {
             newOption.id = opt
             newOption.style.cursor = "pointer"
             newOption.addEventListener('click', (e) => {
-                console.log(this.currentItem.options[e.target.id]);
-                this.menuContainer.style.display = "none"
+                if(e.target instanceof Element){
+                    console.log(this.currentItem.options[e.target.id]);
+                    this.menuContainer.style.display = "none"
+                }
             })
             this.optionsContainer.append(newOption)
         }

@@ -1,10 +1,23 @@
 import Cell from "./Cell.js"
 import {BaseTile} from "./BaseTile.js"
-import tilesConfig from "../tilesConfig.js"
+import tilesConfig, { TileInfo } from "../tilesConfig.js"
 import Tile from "./Tile.js"
+import Game from "../index.js"
 
 export default class MapGenerator {
-    constructor(w,h){
+  finished: boolean
+  baseLayer: Cell[]
+  baseTiles: BaseTile[]
+  finalTiles: Tile[][]
+  tileSize: number
+  subTileSize: number
+  tilesPerColumn: number
+  tilesPerRow: number
+  baseLayerIterations: number
+  baseLayerMaxIterations: number
+  timer: number | null
+
+    constructor(w:number,h:number){
 
         this.finished = false
       
@@ -31,7 +44,8 @@ export default class MapGenerator {
         this.finalTiles = new Array(this.tilesPerRow*3).fill(null).map( () => new Array(this.tilesPerColumn*3).fill(null))
         for(let x = 0; x < this.tilesPerRow*3; x++){
             for(let y = 0; y < this.tilesPerColumn*3; y++){
-                this.finalTiles[x][y] = {x,y}
+                //this.finalTiles[x][y] = {x,y}
+                this.finalTiles[x][y] = new Tile(x,y,"","","")
             }
         }
 
@@ -40,7 +54,7 @@ export default class MapGenerator {
 
     }
 
-    generate(game){
+    generate(game: Game){
         this.finished = false
         
         this.populateBaseLayer()
@@ -50,7 +64,7 @@ export default class MapGenerator {
         return this.finalTiles
     }
   
-    getTileAtBaseLayer(x,y){
+    getTileAtBaseLayer(x:number,y:number){
         return this.baseLayer[y+ x*this.tilesPerColumn]
     }
 
@@ -63,7 +77,7 @@ export default class MapGenerator {
         }
     }
 
-    checkValid(arr, valid) {
+    checkValid(arr: number[], valid: number[]) {
         for (let i = arr.length - 1; i >= 0; i--) {
           let element = arr[i];
           if (!valid.includes(element)) {
@@ -72,8 +86,8 @@ export default class MapGenerator {
         }
     }
 
-    selectRandomOption(game,options){
-      let pool = []
+    selectRandomOption(game: Game,options: number[]){
+      let pool:number[] = []
       options.forEach( opt => {
         for(let i = 0; i < this.baseTiles[opt].weight; i++){
           pool.push(opt)
@@ -82,11 +96,11 @@ export default class MapGenerator {
       return pool[Math.floor(game.getRandomNum()*pool.length)]
     }
 
-    selectRandomBuilding(game){
+    selectRandomBuilding(game: Game){
       const allBuildings = [{name:"houses",weight:100},{name:"departments",weight:10},
                             {name:"shop",weight:25},{name:"hospital",weight:1},
                             {name:"policeStation",weight:1},{name:"fireStation",weight:1},{name:"park",weight:5}]
-      let pool = []
+      let pool:string[] = []
       allBuildings.forEach( building => {
         for(let i = 0; i < building.weight; i++){
           pool.push(building.name)
@@ -95,7 +109,7 @@ export default class MapGenerator {
       return pool[Math.floor(game.getRandomNum()*pool.length)]
     }
 
-    convertToSubTiles(game){
+    convertToSubTiles(game: Game){
       this.baseLayer.forEach( cell => {
         for(let y = 0; y < 3; y++){
           for(let x = 0; x < 3; x++){
@@ -115,7 +129,7 @@ export default class MapGenerator {
       })
     }
 
-    processBaseLayer(game){
+    processBaseLayer(game: Game){
       if(this.finished) return
         this.baseLayerIterations += 1
           let gridCopy = this.baseLayer.slice();
@@ -129,11 +143,11 @@ export default class MapGenerator {
             return
           }
   
-          gridCopy.sort((a, b) => {
+          gridCopy.sort((a:{options:number[]}, b:{options:number[]}) => {
               return a.options.length - b.options.length;
           });
   
-          gridCopy = gridCopy.filter( cell => cell.options.length <= gridCopy[0].options.length)
+          gridCopy = gridCopy.filter( (cell:{options: number[]}) => cell.options.length <= gridCopy[0].options.length)
   
           const cell = gridCopy[Math.floor(game.getRandomNum()*gridCopy.length)]
           const pick = this.selectRandomOption(game, cell.options)
@@ -156,14 +170,14 @@ export default class MapGenerator {
                 nextGrid[index] = this.baseLayer[index];
               } else {
                   
-                let options = []
+                let options:number[] = []
                 for(let i = 0; i < tilesConfig.length; i++){
                   options.push(i)
                 }
                 // Look up
                 if (y > 0) {
                   let up = this.getTileAtBaseLayer(x,y-1);
-                  let validOptions = [];
+                  let validOptions:number[] = [];
                   for (let option of up.options) {
                     let valid = this.baseTiles[option].down;
                     validOptions = validOptions.concat(valid);
@@ -173,7 +187,7 @@ export default class MapGenerator {
                 // Look right
                 if (x < this.tilesPerRow - 1) {
                   let right = this.getTileAtBaseLayer(x+1,y);
-                  let validOptions = [];
+                  let validOptions:number[] = [];
                   for (let option of right.options) {
                     let valid = this.baseTiles[option].left;
                     validOptions = validOptions.concat(valid);
@@ -183,7 +197,7 @@ export default class MapGenerator {
                 // Look down
                 if (y < this.tilesPerColumn - 1) {
                   let down = this.getTileAtBaseLayer(x,y+1);
-                  let validOptions = [];
+                  let validOptions:number[] = [];
                   for (let option of down.options) {
                     let valid = this.baseTiles[option].up;
                     validOptions = validOptions.concat(valid);
@@ -193,7 +207,7 @@ export default class MapGenerator {
                 // Look left
                 if (x > 0) {
                   let left = this.getTileAtBaseLayer(x-1,y);
-                  let validOptions = [];
+                  let validOptions:number[] = [];
                   for (let option of left.options) {
                     let valid = this.baseTiles[option].right;
                     validOptions = validOptions.concat(valid);

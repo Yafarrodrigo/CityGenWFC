@@ -1,4 +1,12 @@
+import Game from "../index"
+
 export default class Controls{
+
+  UP: boolean
+  RIGHT: boolean
+  DOWN: boolean
+  LEFT: boolean
+
     constructor(){
       this.UP = false
       this.RIGHT = false
@@ -6,7 +14,7 @@ export default class Controls{
       this.LEFT = false
     }
     
-    createListeners(game){
+    createListeners(game: Game){
       window.addEventListener('click', (evt) => {
         const rect = game.graphics.canvas.getBoundingClientRect();
         const x = Math.floor((evt.clientX - rect.left - game.graphics.viewport.offset.x)/game.graphics.viewTileSize)

@@ -1,9 +1,18 @@
-function compareEdge(a, b) {
+import { TileInfo } from "../tilesConfig"
+
+function compareEdge(a:string, b:string) {
   let reversed = b.split("").reverse().join("")
   return a == reversed
 }  
 export class BaseTile {
-  constructor(tileInfo) {
+  name:string
+  edges:string[]
+  weight: number
+  up:number[]
+  right:number[]
+  down:number[]
+  left:number[]
+  constructor(tileInfo:TileInfo) {
     this.name = tileInfo.name
     this.edges = tileInfo.edges
     this.weight = tileInfo.weight
@@ -14,7 +23,7 @@ export class BaseTile {
   }
   
   // Find the valid neighbors
-  analyze(tiles) {
+  analyze(tiles: BaseTile[]) {
     for (let i = 0; i < tiles.length; i++) {
       let tile = tiles[i]
       // UP

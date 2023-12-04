@@ -1,8 +1,17 @@
+import Game from "../index.js"
 import tilesConfig from "../tilesConfig.js"
+import Player from "./Player.js"
 import Viewport from "./Viewport.js"
 
 export default class Graphics {
-  constructor(w,h){
+  w: number
+  h: number
+  tileImgs: {[key:string]: HTMLImageElement}
+  canvas: HTMLCanvasElement
+  ctx: CanvasRenderingContext2D
+  viewTileSize: number
+  viewport: Viewport
+  constructor(w: number,h: number){
     this.w = w
     this.h = h
 
@@ -14,8 +23,8 @@ export default class Graphics {
       }
     })
 
-    this.canvas = document.getElementById('canvas')
-    this.ctx = canvas.getContext('2d')
+    this.canvas = (document.getElementById('canvas')) as HTMLCanvasElement
+    this.ctx = (this.canvas.getContext('2d')) as CanvasRenderingContext2D
 
     this.canvas.width = w
     this.canvas.height = h
@@ -23,13 +32,13 @@ export default class Graphics {
     this.ctx.fillStyle = "black"
     this.ctx.fillRect(0,0,w,h)
 
-    this.viewTileSize = 100
+    this.viewTileSize = 150
 
     this.viewport = new Viewport(w,h,this.viewTileSize)
   }
 
 
-  drawPlayer(player){
+  drawPlayer(player: Player){
     const {offset} = this.viewport
     this.ctx.fillStyle = "red"
     this.ctx.beginPath()
@@ -38,8 +47,8 @@ export default class Graphics {
     this.ctx.fill()
   }
 
-  showProgress(current, max){
-    this.ctx.clearRect(0,0,this.canvasWidth,this.canvasHeight)
+  showProgress(current: number, max: number){
+    this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height)
     const percent = Math.floor((current/max)*100)
     const txt = "Generating Base Map: " + percent  + "%"
     this.ctx.fillStyle = "white"
@@ -49,7 +58,7 @@ export default class Graphics {
     this.ctx.fillText(txt, 45,50)
   }
 
-  drawSubGrid(game){
+  drawSubGrid(game: Game){
     const tileSize = this.viewTileSize
     const { offset } = this.viewport
     for(let x = 0; x < game.map.tilesPerRow*3; x++){
@@ -62,11 +71,11 @@ export default class Graphics {
     }
   }
 
-  drawViewport(game){
+  drawViewport(game: Game){
 
     const tileSize =  this.viewTileSize
 
-    this.ctx.clearRect(0,0,this.canvasWidth,this.canvasHeight)
+    this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height)
     this.ctx.strokeStyle = "#333"
     this.ctx.fillStyle = "black"
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height)
@@ -88,7 +97,7 @@ export default class Graphics {
     }
   }
 
-  drawBuilding(building, x,y){
+  drawBuilding(building:string, x:number,y:number){
     if(building === "gasStation") this.ctx.fillStyle = "rgb(0,255,0,0.25)"
     else this.ctx.fillStyle = "rgb(0,0,255,0.25)"
     this.ctx.fillRect(x+2,y+2, this.viewTileSize -2,this.viewTileSize -2)
@@ -99,7 +108,7 @@ export default class Graphics {
     this.ctx.strokeText(building, x+5 ,y+50 )
   }
 
-  update(game){
+  update(game: Game){
     this.viewport.updateViewport(game, (game.player.x * this.viewTileSize), (game.player.y * this.viewTileSize))
     this.drawViewport(game)
     this.drawSubGrid(game)

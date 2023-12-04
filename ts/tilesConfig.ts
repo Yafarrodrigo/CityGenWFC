@@ -1,4 +1,12 @@
-const tilesConfig = [
+export type TileInfo = {
+    name: string
+    imgName: string
+    edges: string[]
+    weight: number
+    subTiles: string[]
+}
+
+const tilesConfig: TileInfo[] = [
     {name:"empty", imgName:"empty", edges: [ "eee", "eee", "eee", "eee" ],
         weight: 100, subTiles:["empty","empty","empty","empty","empty","empty","empty","empty","empty"]},
 
@@ -35,7 +43,7 @@ const tilesConfig = [
     {name:"cornerBR", imgName:"cornerBR", edges: [ "eee", "brb", "brb", "eee" ],
         weight: 10,  subTiles: ["empty","empty","empty","empty","cornerBR","horizontal","empty","vertical","empty"]},
 
-    {name:"roundel", edges: [ "brb", "brb", "brb", "brb" ],
+    {name:"roundel", imgName: "", edges: [ "brb", "brb", "brb", "brb" ],
     weight: 1,  subTiles: ["cornerBR","topT","cornerBL","leftT","empty","rightT","cornerTR","bottomT","cornerTL"]}
 
 ]

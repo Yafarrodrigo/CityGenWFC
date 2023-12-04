@@ -1,5 +1,10 @@
 export default class Tile{
-    constructor(x,y,value,img,building){
+    x:number
+    y:number
+    value: string
+    img: string
+    building: string | null
+    constructor(x:number,y:number,value:string,img:string,building:string|null){
         this.x = x,
         this.y = y,
         this.value = value

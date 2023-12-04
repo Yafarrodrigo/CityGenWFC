@@ -1,5 +1,15 @@
+import Game from "../index.js"
+
 export default class Viewport{
-    constructor(w,h, tileSize){
+  w:number
+  h:number
+  screen:{x:number,y:number}
+  startTile:{x:number,y:number}
+  endTile:{x:number,y:number}
+  offset:{x:number,y:number}
+  viewTileSize: number
+
+    constructor(w:number,h:number, tileSize:number){
         this.w = w
         this.h = h
         this.screen = {x:w,y:h}
@@ -9,7 +19,7 @@ export default class Viewport{
         this.viewTileSize = tileSize
     }
 
-    updateViewport(game, targetX,targetY){
+    updateViewport(game:Game, targetX:number,targetY:number){
           
         this.screen.x = this.w
         this.screen.y = this.h
