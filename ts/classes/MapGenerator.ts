@@ -1,6 +1,7 @@
 import Cell from "./Cell.js"
 import {BaseTile} from "./BaseTile.js"
-import tilesConfig, { TileInfo } from "../tilesConfig.js"
+import tilesConfig from "../tilesConfig.js"
+import buildingsConfig from "../buildingsConfig.js"
 import Tile from "./Tile.js"
 import Game from "../index.js"
 
@@ -97,9 +98,7 @@ export default class MapGenerator {
     }
 
     selectRandomBuilding(game: Game){
-      const allBuildings = [{name:"houses",weight:100},{name:"departments",weight:10},
-                            {name:"shop",weight:25},{name:"hospital",weight:1},
-                            {name:"policeStation",weight:1},{name:"fireStation",weight:1},{name:"park",weight:5}]
+      const allBuildings = buildingsConfig
       let pool:string[] = []
       allBuildings.forEach( building => {
         for(let i = 0; i < building.weight; i++){
