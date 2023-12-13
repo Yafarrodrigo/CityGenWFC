@@ -102,7 +102,7 @@ export default class MapGenerator {
       let pool:string[] = []
       allBuildings.forEach( building => {
         for(let i = 0; i < building.weight; i++){
-          pool.push(building.name)
+          pool.push(building.id)
         }
       })
       return pool[Math.floor(game.getRandomNum()*pool.length)]
@@ -112,16 +112,18 @@ export default class MapGenerator {
       this.baseLayer.forEach( cell => {
         for(let y = 0; y < 3; y++){
           for(let x = 0; x < 3; x++){
-            const value = tilesConfig[cell.options[0]].subTiles[x+(y*3)]
+            let value = tilesConfig[cell.options[0]].subTiles[x+(y*3)]
             let building = null
             if(cell.options[0] !== 0 && value === "empty"){
               if(cell.options[0] === 12 && value === "empty"){ // roundel
                 building = "gasStation"
+                value = "building"
               }else{
                 building = this.selectRandomBuilding(game)
+                value = "building"
               }
             }
-            const img = value
+            const img = tilesConfig[cell.options[0]].subTiles[x+(y*3)]
             this.finalTiles[ (cell.x*3) + x ][ (cell.y*3) + y ] = new Tile((cell.x*3) + x,(cell.y*3) + y, value, img, building)
           }
         }
