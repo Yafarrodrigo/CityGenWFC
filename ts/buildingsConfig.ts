@@ -73,7 +73,7 @@ const buildingsConfig: buildingInfo[] = [
         id:"clothingShop",
         weight:25,
         areas:{
-            clothesShowroom:{
+            clothesStorageRoom:{
                 min: 1,
                 max: 1
             },
@@ -84,6 +84,50 @@ const buildingsConfig: buildingInfo[] = [
             parking:{
                 min: 0,
                 max: 1
+            },
+            offices:{
+                min: 1,
+                max: 1
+            }
+        }
+    },
+    {
+        id:"toolsShop",
+        weight:25,
+        areas:{
+            toolsStorageRoom:{
+                min: 1,
+                max: 1
+            },
+            toilet:{
+                min: 0,
+                max: 2
+            },
+            parking:{
+                min: 0,
+                max: 1
+            },
+            offices:{
+                min: 1,
+                max: 1
+            }
+        }
+    },
+    {
+        id:"mechanicShop",
+        weight:25,
+        areas:{
+            mechanicStorage:{
+                min: 1,
+                max: 1
+            },
+            garage:{
+                min: 1,
+                max: 1
+            },
+            toilet:{
+                min: 0,
+                max: 2
             },
             offices:{
                 min: 1,
