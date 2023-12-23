@@ -43,7 +43,7 @@ export default class Game {
         //this.rightClickMenu.updateOptions("item3")
 
         // KEEPS RE-GENERATING MAP
-        this.resetSave()
+        //this.resetSave()
     }
 
     checkForSave(){
