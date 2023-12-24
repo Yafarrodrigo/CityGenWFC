@@ -1,19 +1,17 @@
 import Game from "../index.js"
-import Inventory from "./Inventory.js"
+import Equipment from "./Equipment.js"
 import Map from "./Map.js"
 import Tile from "./Tile.js"
 
 export default class Player{
     x: number
     y: number
-    inventory: Inventory
+    equipment: Equipment
+
     constructor(){
         this.x = 0
         this.y = 0
-        this.inventory = new Inventory()
-        this.inventory.addItem("shovel", 2)
-        console.log(this);
-        
+        this.equipment = new Equipment()
     }
 
     randomPosition(game: Game){

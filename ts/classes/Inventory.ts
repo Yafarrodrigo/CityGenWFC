@@ -17,7 +17,6 @@ export default class Inventory {
     }
 
     changeWeight(qty:number){
-
         const totalWeight = this.weight + qty
 
         if(totalWeight >= this.maxWeight) this.weight = this.maxWeight
