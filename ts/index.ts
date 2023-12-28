@@ -1,3 +1,4 @@
+import Building from "./classes/Building.js"
 import Controls from "./classes/Controls.js"
 import Graphics from "./classes/Graphics.js"
 import Map from "./classes/Map.js"
@@ -44,6 +45,8 @@ export default class Game {
 
         // KEEPS RE-GENERATING MAP
         //this.resetSave()
+
+        const b = new Building(this, "smallHouse")
     }
 
     checkForSave(){
@@ -96,5 +99,5 @@ export default class Game {
     }
 }
 
-const game = new Game(1000, 1000, Math.floor(Math.random()*1000))
+const game = new Game(1000, 1000, 1/* Math.floor(Math.random()*1000) */)
 game.start()
